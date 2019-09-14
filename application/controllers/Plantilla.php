@@ -15,8 +15,6 @@ class Plantilla extends CI_Controller {
 		}
 	}
 
-	
-
 	function CargarInstitutos(){
 		$GRADO = $this->input->post('Grado_1');
 		if($GRADO==2039842 or $GRADO==2039846 or $GRADO==2039843 or $GRADO==2039848 or $GRADO==2039847 or $GRADO==2039857){
@@ -287,8 +285,7 @@ class Plantilla extends CI_Controller {
     			
     			unset($datos['Jurisdicción']);
     			unset($datos['0']);
-    			unset($datos['IdSeccion']);
-
+				unset($datos['IdSeccion']);
     			if($this->M_plantilla->actlaboral($datos)==true){
     				$this->session->set_flashdata("Aviso","Datos Actualizados Exitosamente");
     				redirect('Plantilla/ver/'.$data['datos_reg'][0]->{'IdPersonal'});
@@ -307,7 +304,6 @@ class Plantilla extends CI_Controller {
 				$create=strtotime($data['datos_reg'][0]->{'Fecha'});
 				$data['datos_reg'][0]->{'Fecha'} = date('d',$create)." de ".$meses[date('n',$create)-1]. " del ".date('Y g:i a',$create);
 				$this->load->view('Plantilla/v_frm_laboral', $data);
-
 			}
 		} else{
 			$this->session->set_flashdata("error","ACCESO DENEGADO");
@@ -356,11 +352,6 @@ class Plantilla extends CI_Controller {
 		}
 	}
 
-	function prueba(){
-		// $data['listado'] = $this->M_plantilla->operativo();
-		// $this->load->view('Plantilla/view_list_plantilla',$data);
-	}
-
 	function nuevolaboral($id){		
 		if ($id == NULL){ //si el ID es nulo
 			$this->session->set_flashdata("error","Falta Información");
@@ -381,7 +372,7 @@ class Plantilla extends CI_Controller {
 				}
 				unset($datos['Jurisdicción']);
 				unset($datos['0']);
-				// print_r($datos);
+				unset($datos['IdSeccion']);
 				$this->M_plantilla->bajalaboral($id);
 				$this->M_plantilla->insertlaboral($datos);
 				$this->M_inicio->monitor(2, 3, $datos['IdUsuario']);
@@ -397,7 +388,6 @@ class Plantilla extends CI_Controller {
 				$data['title']='Nuevo';
 				$data['tra'] = $this->M_inicio->tra();
 				$data['codigo'] = $this->M_inicio->codigo();
-				// $data['unidad'] = $this->M_inicio->unidad();
 				$data['estatus'] = $this->M_inicio->estatus();
 				$ultimo = $this->M_plantilla->Ultimo($id);
 				if ($ultimo[0]->{'IdLaboral'}!=null){
@@ -514,46 +504,6 @@ class Plantilla extends CI_Controller {
 			redirect('Plantilla');	
 		}
 	}
-
-	// function nuevo(){
-	// 	if($this->session->userdata("IdPerfil")<=2){//SI ES USUARIO ADMINISTRADOR O MAYOR LE DEJAMOS ACCESAR AL MODULO "NUEVO REGISTRO"
-	// 	if($this->input->post()){
-	// 		$datos = $this->input->post();
-	// 			$NT = $this->M_plantilla->RFC($datos['RFC']); //verificar si hay algun registro con el mismo RFC
-	// 			if ($NT <> false) {
-	// 				$this->session->set_flashdata("error","El RFC: ".$datos['RFC']." Ya fue registrado. <br><a href='".base_url()."Plantilla/ver/".$NT[0]->{'IdPersonal'}."' class='btn btn-primary'>Ver Expediente</a>");
-	// 				redirect('Plantilla/nuevo','refresh');
-	// 			} else {				
-	// 				$datos['Telefono'] = str_replace(
-	// 					array("\\", "¨", "º", "-", "~",
-	// 						"#", "@", "|", "!", "\"",
-	// 						"·", "$", "%", "&", "/",
-	// 						"(", ")", "?", "'", "¡",
-	// 						"¿", "[", "^", "<code>", "]",
-	// 						"+", "}", "{", "¨", "´",
-	// 						">", "< ", ";", ",", ":",
-	// 						".", " "),
-	// 					'',
-	// 					$datos['Telefono']
-	// 				);
-	// 				if ($datos['IdMunicipio'] == NULL) {
-	// 					$datos['IdMunicipio']= '999';
-	// 				}
-	// 				$id = $this->M_plantilla->agregar($datos);
-	// 				$this->M_inicio->monitor(2, 1, $this->session->userdata('id'));
-	// 				$this->session->set_flashdata("Aviso","Datos Agregados con exito");
-	// 				redirect('Plantilla/nuevolaboral/'.$id);
-	// 			}
-	// 		} else {
-	// 			$data['muni'] = $this->M_inicio->muni();
-	// 			$data['title'] = 'Nuevo';
-	// 			$this->load->view('Plantilla/view_frm_plantilla', $data);
-	// 		}
-	// 	} else {//FIN IF VERIFICAR USUARIO y SI NO MANDAMOS MENSAJE DE ERROR
-	// 		$this->session->set_flashdata("error","ACCESO DENEGADO");
-	// 		redirect('Plantilla');			
-	// 	}//FIN ELSE
-	// }//FIN nuevo
 
 	function ver($id=null){
 		if ($id == NULL){ //si el ID es nulo

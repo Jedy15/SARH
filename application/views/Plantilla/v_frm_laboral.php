@@ -409,11 +409,16 @@
                 var IdSeccion = <?php echo $datos_reg[0]->IdSeccion; ?>;
 
                 SelectSubseccion(IdSeccion);
-                $('#ListaSubseccion').show();
                 var Id_Subseccion = <?php echo $datos_reg[0]->Id_Subseccion; ?>;
+                console.log(Id_Subseccion);
+                if(Id_Subseccion > 0){
+                  $('#ListaSubseccion').show();
+                } else {
+                  $('#ListaSubseccion').val(Id_Subseccion);
+                  $('#ListaSubseccion').trigger('change'); // Notify any JS components that the value changed
+                }
 
-                $('#ListaSubseccion').val(Id_Subseccion);
-                $('#ListaSubseccion').trigger('change'); // Notify any JS components that the value changed
+                
 
               <?php } ?>
 
