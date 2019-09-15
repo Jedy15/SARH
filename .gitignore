@@ -33,3 +33,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 ## ingnorar user_guide de codeigniter, los docs,
 user_guide
 docs
+
+## quitar los .xlsx
+*.xlsx

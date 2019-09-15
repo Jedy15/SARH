@@ -28,7 +28,6 @@ class M_incidencia extends CI_Model {
 		return $query->result();
 	}
 
-
 	function InsertarTipoIncidencia($datos){
 		$this ->db->set($datos);
 		return $this->db->insert('t_tipo_incidencia');
@@ -111,11 +110,31 @@ class M_incidencia extends CI_Model {
 	}
 
 	function ContarPaseSalida($IdPersonal){
-		//SELECT *, sec_to_time(timestampdiff(second, A.start, A.end)) as T
-		// FROM rh2018.t_regincidencia as A
-		$WHERE =  "Id_Inc = 19 AND MONTH(start)=MONTH(now())";
-		$this->db->select('*, sec_to_time(timestampdiff(second, start, end)) Horas');
-		// $this->db->from('t_regincidencia');
+		$WHERE =  "t_incidencia.IdSigla = 16 AND MONTH(start)= MONTH(now()) and year(start) = year(now())";
+		$this->db->select('count(t_regincidencia.Id) Total, date_format(sec_to_time(timestampdiff(second, start, end)), "%H:%i") Horas');
+		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
+		$this->db->where($WHERE);
+		$this->db->where('IdPersonal', $IdPersonal);
+		$query = $this->db->get('t_regincidencia');
+		return $query->result();
+	}
+
+	function ContarLicenciaMedicaMes($IdPersonal, $Mes)
+	{
+		$WHERE =  "t_incidencia.IdSigla = 4 AND MONTH(start)=".$Mes." and year(start) = year(now())";		
+		$this->db->select('SUM(TIMESTAMPDIFF(DAY, start, end)) dias');
+		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
+		$this->db->where($WHERE);
+		$this->db->where('IdPersonal', $IdPersonal);
+		$query = $this->db->get('t_regincidencia');
+		return $query->result();
+	}
+
+	public function LicenciaMedicaAnual($IdPersonal, $year)
+	{
+		$WHERE =  "t_incidencia.IdSigla = 4 and year(start) =".$year;		
+		$this->db->select('SUM(TIMESTAMPDIFF(DAY, start, end)) dias');
+		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
 		$this->db->where($WHERE);
 		$this->db->where('IdPersonal', $IdPersonal);
 		$query = $this->db->get('t_regincidencia');
@@ -141,15 +160,30 @@ class M_incidencia extends CI_Model {
 	}
 
 	function movimientos($IdPersonal){
-		// $this->db->select('t_controlinc.*, t_regincidencia.Id IdEvento, t_regincidencia.Id_Inc, t_regincidencia.start, t_regincidencia.end, t_regincidencia.nota, t_incidencia.Nombre, t_incidencia.Sigla, tblusuario.Usuario, tblusuario.Nombre NUsuario, tblusuario.Apellido AUsuario');
-		$this->db->select('t_regincidencia.Folio, t_incidencia.Nombre Incidencia, date(t_regincidencia.start) start, date(t_regincidencia.end)  end, tblusuario.Usuario, tblusuario.Nombre NUsuario, tblusuario.Apellido AUsuario, t_controlinc.Captura, YEARWEEK(t_controlinc.Captura) Semana, t_regincidencia.nota, t_regincidencia.Id IdEvento, t_incidencia.Sigla, t_regincidencia.Id_Inc');
+		$this->db->select('t_regincidencia.Folio, t_incidencia.Nombre Incidencia, t_regincidencia.start, t_regincidencia.end, 
+		tblusuario.Usuario, tblusuario.Nombre NUsuario, tblusuario.Apellido AUsuario, t_controlinc.Captura, 
+		YEARWEEK(t_controlinc.Captura, 1) Semana, t_regincidencia.nota, t_regincidencia.Id IdEvento, t_tipo_incidencia.Id, t_tipo_incidencia.Sigla, t_regincidencia.Id_Inc');
 		$this->db->from('t_regincidencia');
 		$this->db->join('t_controlinc', 't_regincidencia.Folio = t_controlinc.Folio', 'left');
 		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
 		$this->db->join('tblusuario', 't_regincidencia.IdUsuario = tblusuario.IdUsuario', 'left');
+		$this->db->join('t_tipo_incidencia', 't_incidencia.IdSigla = t_tipo_incidencia.Id', 'left');
 		$this->db->where('IdPersonal', $IdPersonal);
 		// $this->db->limit(10);
 		// $this->db->order_by('Folio', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function DatosCardex($IdPersonal)
+	{
+		$this->db->select('Date(t_regincidencia.start) start, Date(t_regincidencia.end) end, t_tipo_incidencia.Sigla');
+		$this->db->from('t_regincidencia');
+		$this->db->join('t_controlinc', 't_regincidencia.Folio = t_controlinc.Folio', 'left');
+		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
+		$this->db->join('tblusuario', 't_regincidencia.IdUsuario = tblusuario.IdUsuario', 'left');
+		$this->db->join('t_tipo_incidencia', 't_incidencia.IdSigla = t_tipo_incidencia.Id', 'left');
+		$this->db->where('IdPersonal', $IdPersonal);
 		$query = $this->db->get();
 		return $query->result();
 	}

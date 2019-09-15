@@ -68,8 +68,6 @@
 	</style>
 </head>
 
-
-
 <?php if($this->session->flashdata("error")):?>
 	<div class="alert alert-danger alert-dismissible">
 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -103,7 +101,7 @@
 			<!-- Main content -->
 			<section class="content">
 				<div class="row">
-					<div class="col-md-4 col-sm-6 col-xs-12">
+					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
 							<span class="info-box-icon bg-aqua"><i class="fa fa-sign-out"></i></span>
 							<div class="info-box-content">
@@ -117,7 +115,7 @@
 					</div>
 					<!-- /.col -->
 
-					<div class="col-md-4 col-sm-6 col-xs-12">
+					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
 							<span class="info-box-icon bg-green"><i class="fa fa-calendar-check-o"></i></span>
 							<div class="info-box-content">
@@ -131,13 +129,27 @@
 					</div>
 					<!-- /.col -->
 
-					<div class="col-md-4 col-sm-6 col-xs-12">
+					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
 							<span class="info-box-icon bg-yellow"><i class="fa  fa-folder-open-o"></i></span>
 							<div class="info-box-content">
 								<span class="info-box-text">Reposición de Dias <?php echo date("Y"); ?></span>
 								<span class="info-box-number"><span id="TotalRepocision"></span><small> en el año</small></span>
 								<span class="info-box-number"><span id="TotalRepocisionMes"></span><small> en <span class="mes"></span></small></span>
+							</div>
+							<!-- /.info-box-content -->
+						</div>
+						<!-- /.info-box -->
+					</div>
+					<!-- /.col -->
+
+					<div class="col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box">
+							<span class="info-box-icon bg-teal"><i class="fa  fa-folder-open-o"></i></span>
+							<div class="info-box-content">
+								<span class="info-box-text">Dias de Licencia Médica <?php echo date("Y"); ?></span>
+								<span class="info-box-number"><span id="IncapacidadAnual"></span><small> en el año</small></span>
+								<span class="info-box-number"><span id="IncapacidadMen"></span><small> en <span class="mes"></span></small></span>
 							</div>
 							<!-- /.info-box-content -->
 						</div>
@@ -164,7 +176,7 @@
 										<tr>
 											<th>Folio</th>
 											<th>Incidencia</th>
-											<!-- <th>Sigla</th> -->
+											<th>Sigla</th>
 											<th>Inicio</th>
 											<th>Fin</th>
 											<th>Usuario</th>
@@ -456,7 +468,15 @@
 
     <script>
     	$(document).ready(function() {
-    		listar();
+		//------------- codigo para mostrar el mes actual-----------------
+			var d = new Date();
+			var months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+			$(".mes").html(months[d.getMonth()]+' '+d.getFullYear());
+			var year = d.getFullYear();
+			var NumMes = d.getMonth();
+			NumMes++
+			listar();
+			Incapacidad(NumMes, year);
     	});
 
     	var listar=function(){
@@ -475,69 +495,65 @@
 				"order":  [ 0, 'asc' ],
 
 				"columns": [
-				{ "data":"Folio",
-				"render": function ( data, type, row, meta ) {
-					return 'F-'+data;
-				}},
+					{ "data":"Folio",
+					"render": function ( data, type, row, meta ) {
+						return 'F-'+data;
+					}},
 
-				{"data":"Incidencia"},
-				// {"data":"Sigla"},
+					{"data":"Incidencia"},
+					{"data":"Sigla"},
 
-				{ "data":"start",
-				"render": function ( data, type, row, meta ) {
-					var tiempo = moment(data);
-					if (row.Id_Inc==19) {
-						return tiempo.format('YYYY/MM/DD hh:mm a');
-					} else {
-						return tiempo.format('YYYY/MM/DD');
-					}
-				}},
+					{ "data":"start",
+					"render": function ( data, type, row, meta ) {
+						var tiempo = moment(data);
+						if (row.Id==16) {
+							return tiempo.format('YYYY/MM/DD hh:mm a');
+						} else {
+							return tiempo.format('YYYY/MM/DD');
+						}
+					}},
 
-				{"data":"end",
-				"render": function ( data, type, row, meta ) {
-					var tiempo = moment(data);
-					if (row.Id_Inc==19) {
-						return tiempo.format('YYYY/MM/DD hh:mm a');
-					} else {
-						if (data!=null) {
-							var fin = tiempo.subtract(1, 'days');
-							var inicio = moment(row.start).isSame(fin, 'day');
-							if (inicio == false) {
-								return tiempo.format('YYYY/MM/DD');
+					{"data":"end",
+					"render": function ( data, type, row, meta ) {
+						var tiempo = moment(data);
+						if (row.Id==16) {
+							return tiempo.format('YYYY/MM/DD hh:mm a');
+						} else {
+							if (data!=null) {
+								var fin = tiempo.subtract(1, 'days');
+								var inicio = moment(row.start).isSame(fin, 'day');
+								if (inicio == false) {
+									return tiempo.format('YYYY/MM/DD');
+								} else {
+									return null;
+								}
 							} else {
 								return null;
-							}
+							}						
+						}
+					}},
+
+					{"data":"Usuario"},
+
+					{"data":"Captura"},		
+
+					{"data":"Semana"},
+
+					{"data":"nota"},
+
+					{"data": null,
+					"render": function(data, type, row){
+						if (row.Id_Inc!=19) {
+							return '<button type="button" class="eliminar btn btn-danger btn-xs">'+
+							'<i class="fa fa-trash"></i>'+
+							'</button>'+
+							'<button type="button" class="editar btn btn-warning btn-xs">'+
+							'<i class="fa fa-edit"></i>'+
+							'</button>';
 						} else {
-							return null;
-						}						
-					}
-				}},
-
-				{"data":"Usuario"},
-
-				{"data":"Captura"},		
-
-				{"data":"Captura",
-				"render":function(data, type, row){
-					var semana = moment(data);
-					return semana.get('year')+'-'+semana.get('week');
-				}},
-
-				{"data":"nota"},
-
-				{"data": null,
-				"render": function(data, type, row){
-					if (row.Id_Inc!=19) {
-						return '<button type="button" class="eliminar btn btn-danger btn-xs">'+
-						'<i class="fa fa-trash"></i>'+
-						'</button>'+
-						'<button type="button" class="editar btn btn-warning btn-xs">'+
-						'<i class="fa fa-edit"></i>'+
-						'</button>';
-					} else {
-						return '<button type="button" class="eliminar btn btn-danger btn-xs" data-toggle="modal"><i class="fa fa-trash"></i></button>';
-					}
-				}}	
+							return '<button type="button" class="eliminar btn btn-danger btn-xs" data-toggle="modal"><i class="fa fa-trash"></i></button>';
+						}
+					}}	
 				],
 
 				dom: 'lBfrtip',
@@ -693,35 +709,46 @@
     	function ValidarIncidencia(th){
     		var valor = th;
     		// console.log(valor);
-    	}
+		}
+		
+		function Incapacidad(mes, year) {
+			$.post("<?php echo base_url();?>Incidencia/LicenciaMedica", {
+				IdPersonal : <?php echo $Persona[0]->IdPersonal ?>,
+				Mes: mes,
+				Year: year
+			},
+				function (data, textStatus, jqXHR) {
+					var datos = $.parseJSON(data);
+					// console.log(data);
+					
+					if (datos.year[0].dias==null) {
+						datos.year[0].dias = 0;
+					}
+					if (datos.mes[0].dias==null) {
+						datos.mes[0].dias = 0;
+					}		
+					$('#IncapacidadAnual').html(datos.year[0].dias);
+					$('#IncapacidadMen').html(datos.mes[0].dias);
+				}
+			);
+		}
     </script>
 
     <script>
-		//------------- codigo para mostrar el mes actual-----------------
-		var d = new Date();
-		var months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-		$(".mes").html(months[d.getMonth()]+' '+d.getFullYear());
+	
 
 		//--------- Carga de los datos de Pases de Salida del mes actual
 		$.post('<?php echo base_url(); ?>Incidencia/ContarHrs/<?php echo $Persona[0]->IdPersonal ?>', { }, 
 			function(data, textStatus, xhr) {
 				var datos = $.parseJSON(data); 
-				var total;
-				total = 0;
-				for(var i in datos) {
-					var horas;
-					var tiempo;
-					var minutos;
-
-				tiempo = moment(datos[i].Horas,'HH:mm'); //Cargamos las horas calculadas en tiempo
-				horas = tiempo.hours();	//Extraemos las hrs
-				minutos = tiempo.minutes()/60;	//extraemos los minutos y lo convertimos en horas
-				total += horas+minutos;	//Sumamos a la variable total de horas
-			}
-			$("#TotalPaseSalida").html(datos.length);
-			$('#TotalHrsSalida').html(total);
+				if (datos[0].Total == 0) {
+					datos[0].Horas = '00:00';
+				}
+				$("#TotalPaseSalida").html(datos[0].Total);
+				$('#TotalHrsSalida').html(datos[0].Horas);
 		}); //Fin post Cargar Pase de Salida
 
+		//-------- Carga Economicos
 		$.post('<?php echo base_url(); ?>Incidencia/Reposicion', 
 		{
 			IdPersonal: '<?php echo $Persona[0]->IdPersonal ?>',
@@ -729,14 +756,19 @@
 		}, 
 		function(data, textStatus, xhr) {
 			var datos = $.parseJSON(data);
-			if(!datos.mes[0].dias){
+			if(datos.mes[0].dias==null){
 				datos.mes[0].dias = 0;
+			}
+			if(datos.total[0].dias==null){
+				datos.total[0].dias = 0;
 			}
 			$("#TotalEconomico").html(datos.total[0].dias);
 			$("#TotalEconomicoMes").html(datos.mes[0].dias);
+
 		});//Fin post Cargar Economicos
 
 
+		//-------- Carga Reposiciones
 		$.post('<?php echo base_url(); ?>Incidencia/Reposicion', 
 		{
 			IdPersonal: '<?php echo $Persona[0]->IdPersonal ?>',
@@ -747,6 +779,11 @@
 			if(!datos.mes[0].dias){
 				datos.mes[0].dias = 0;
 			}
+
+			if(!datos.total[0].dias){
+				datos.total[0].dias = 0;
+			}
+
 			$("#TotalRepocision").html(datos.total[0].dias);
 			$("#TotalRepocisionMes").html(datos.mes[0].dias);
 		});

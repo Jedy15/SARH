@@ -1,9 +1,9 @@
 <?php
 # Update: 31 Julio 2019.
-// include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/dompdf/autoload.inc.php");
-// include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/autoload.php");
-include($_SERVER['DOCUMENT_ROOT']."/vendor/dompdf/autoload.inc.php");
-include($_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php");
+include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/dompdf/autoload.inc.php");
+include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/autoload.php");
+// include($_SERVER['DOCUMENT_ROOT']."/vendor/dompdf/autoload.inc.php");
+// include($_SERVER['DOCUMENT_ROOT']."/vendor/autoload.php");
 use Dompdf\Dompdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -27,8 +27,8 @@ class Reporte
       ob_start();
 
     #application\views\Plantilla
-      // require($_SERVER['DOCUMENT_ROOT'].'\SARH\application\views\Incidencia\plantilla_oficio.php');
-      require($_SERVER['DOCUMENT_ROOT'].'\application\views\Incidencia\plantilla_oficio.php');
+      require($_SERVER['DOCUMENT_ROOT'].'\SARH\application\views\Incidencia\plantilla_oficio.php');
+      // require($_SERVER['DOCUMENT_ROOT'].'\application\views\Incidencia\plantilla_oficio.php');
 
 
       $html = ob_get_contents();

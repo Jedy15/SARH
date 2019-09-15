@@ -19,19 +19,17 @@ class Incidencia extends CI_Controller {
 		}
 	}
 
-
-
 	//MODULO PARA CARDEX
 	function ProcesarIncidencia($IdPersonal){
-		$data = $this->input->post();
+		// $data = $this->input->post();
 
-		$query = $this->M_incidencia->movimientos($IdPersonal);
+		$query = $this->M_incidencia->DatosCardex($IdPersonal);
 
 
-		include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/IncidenciaReporte.php");
-		include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/Reporte.php");
-		// include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/IncidenciaReporte.php");
-		// include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/Reporte.php");
+		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/IncidenciaReporte.php");
+		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/Reporte.php");
+		include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/IncidenciaReporte.php");
+		include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/Reporte.php");
 
 		$incidencias = new IncidenciaReporte();
 
@@ -51,7 +49,6 @@ class Incidencia extends CI_Controller {
 
 		}
 	}
-
 
 	//TIPOS DE INCIDENCIA	
 	function EditarTipoIncidencia(){
@@ -132,6 +129,17 @@ class Incidencia extends CI_Controller {
 		echo json_encode($datos);
 	}
 
+	function LicenciaMedica(){
+		if ($this->input->post()) {
+			$data = $this->input->post();
+			$Total['mes'] = $this->M_incidencia->ContarLicenciaMedicaMes($data['IdPersonal'], $data['Mes']);
+			$Total['year'] = $this->M_incidencia->LicenciaMedicaAnual($data['IdPersonal'], $data['Year']);
+			echo json_encode($Total);
+		} else {
+			$this->session->set_flashdata('error', 'Error');
+			redirect('Plantilla','refresh');			
+		}
+	}
 
 	function Reposicion(){
 		$id = $this->input->post('IdPersonal');
@@ -148,7 +156,6 @@ class Incidencia extends CI_Controller {
 		echo json_encode($data);
 	}
 
-
 	function Economico(){
 		$id = $this->input->post('IdPersonal');
 		$Laboral = $this->M_plantilla->laboral_actual($id);
@@ -162,7 +169,6 @@ class Incidencia extends CI_Controller {
 		echo json_encode($data);
 	}
 
-
 	function ContarHrs($id){
 		$data = $this->M_incidencia->ContarPaseSalida($id);
 		echo json_encode($data);
@@ -174,8 +180,6 @@ class Incidencia extends CI_Controller {
 		// $data['evento']->{''}
 		echo json_encode($data['evento']);
 	}
-
-
 
 	function RegistroPase($IdPersonal = null){
 		if (!$IdPersonal){ //si el ID es nulo
@@ -190,7 +194,6 @@ class Incidencia extends CI_Controller {
 			$this->load->view('Incidencia/v_reg_pase', $data);
 		}
 	}
-
 
 	function Eliminar($IdPersonal=NULL){
 		if(!$IdPersonal){
@@ -218,8 +221,6 @@ class Incidencia extends CI_Controller {
 		}
 	}
 
-
-
 	function Validar(){
 		if (empty($this->input->post())) {
 			$this->session->set_flashdata("error","Error");
@@ -244,8 +245,6 @@ class Incidencia extends CI_Controller {
 			}
 		}
 	}
-
-
 
 	function Autorizar(){
 		if (empty($this->input->post())) {
@@ -273,8 +272,6 @@ class Incidencia extends CI_Controller {
 		}	
 	}
 
-
-
 	function EditarEvento($IdPersonal){
 		$datos = $this->input->post();
 		$datos['IdUsuario']= $this->session->userdata("id");
@@ -290,7 +287,6 @@ class Incidencia extends CI_Controller {
 		redirect('Incidencia/Control/'.$IdPersonal);
 		// print_r($datos);
 	}
-
 
 	function Control($IdPersonal=NULL){
 		if(!$IdPersonal){
@@ -313,8 +309,6 @@ class Incidencia extends CI_Controller {
 		echo json_encode($datos);
 	}
 
-
-
 	function Captura(){
 		// $datos = $this->input->post('eventos');
 		$datos['IdUsuario']= $this->session->userdata("id");
@@ -323,15 +317,11 @@ class Incidencia extends CI_Controller {
 		// print_r($datos);
 	}
 
-
-
 	function Comparar($IdPersonal){
 		$id = $this->input->post('Id');
 		$data = $this->M_incidencia->Inc_Utilizada($IdPersonal, $id);
 		echo $data;
 	}
-
-
 	#verificar funcion
 	function Agregar($IdPersonal){
 		$datos['IdUsuario']= $this->session->userdata("id");
