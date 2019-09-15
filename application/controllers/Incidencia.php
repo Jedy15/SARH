@@ -39,7 +39,7 @@ class Incidencia extends CI_Controller {
 		{
 			try
 			{
-				Reporte::crearPDF("",$datosParaReporte->resultado);
+				// Reporte::crearPDF("",$datosParaReporte->resultado);
 				Reporte::crearExcel($datosParaReporte->resultado);
 			}
 			catch(Exception $e)
