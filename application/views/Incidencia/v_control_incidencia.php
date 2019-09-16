@@ -94,7 +94,6 @@
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
 			<section class="content-header">
-				<!-- <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-cardex">Generar Cardex</button> -->
 				<h1>Control de Incidencias</h1>
 			</section>
 
@@ -145,7 +144,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
-							<span class="info-box-icon bg-teal"><i class="fa  fa-folder-open-o"></i></span>
+							<span class="info-box-icon bg-teal"><i class="fa fa-wheelchair"></i></span>
 							<div class="info-box-content">
 								<span class="info-box-text">Dias de Licencia Médica <?php echo date("Y"); ?></span>
 								<span class="info-box-number"><span id="IncapacidadAnual"></span><small> en el año</small></span>
@@ -167,6 +166,8 @@
 									<a href="<?php echo base_url(); ?>Plantilla" class="btn btn-warning"><i class="fa fa-step-backward"></i> Regresar</a>
 									<a href="<?php echo base_url(); ?>Incidencia/RegistroPase/<?php echo $Persona[0]->IdPersonal ?>" class="btn btn-success"><i class="fa fa-plus"></i> Captura de Pase</a>
 									<a href="<?php echo base_url(); ?>Incidencia/Registrar/<?php echo $Persona[0]->IdPersonal ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Capturar Incidencia</a>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-cardex"><i class="fa fa-file-text-o"></i> Generar Cardex</button>
+								
 								</div>
 							</div>
 							<!-- /.box-header -->
@@ -312,7 +313,7 @@
 				</div>
 				<?php echo form_close(); ?>
 
-				<?php echo form_open('Incidencia/ProcesarIncidencia/'.$Persona[0]->IdPersonal);?>
+				<?php echo form_open('Incidencia/ImprimirCardex/'.$Persona[0]->IdPersonal);?>
 				<div class="modal modal-info fade" id="modal-cardex">
 					<div class="modal-dialog modal-sm">						
 						<div class="modal-content">
@@ -320,32 +321,25 @@
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								</button>
-								<h4 class="modal-title"></h4>
+								<h4 class="modal-title">Generar Cardex</h4>
 							</div>
 							<div class="modal-body">
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
 											<label>Seleccione año</label>
-											<select class="form-control select2" id="YearCardex" name="YearCardex" style="width: 100%;">
+											<select class="form-control select2" required id="YearCardex" name="YearCardex" style="width: 100%;">
 											</select>
-										</div>
-										<div class="form-group">
-											<label>
-												<input type="checkbox" class="minimal" name="Formato" value="1"> 
-												pdf
-											</label>
-											<label>
-												<input type="checkbox" class="minimal" name="Formato" value="2"> 
-												excel
-											</label>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-								<button type="submit" class="btn btn-outline">Crear</button>
+								<button type="submit" class="btn btn-outline" target="_blank"><i class="fa fa-print"></i> Imprimir</button>
+								<!-- <button type="submit" class="btn btn-primary pull-right" style="margin-right: 5px;"> -->
+            						<!-- <i class="fa fa-download"></i> Generate PDF -->
+          						<!-- </button> -->
 							</div>
 						</div>
 					</div>

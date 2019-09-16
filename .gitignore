@@ -36,3 +36,6 @@ docs
 
 ## quitar los .xlsx
 *.xlsx
+
+## ignorares la libreria de Dompdf
+/application/libraries/dompdf/

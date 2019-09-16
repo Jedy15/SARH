@@ -1,44 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-table {
-  border-collapse: collapse;
-  /*border: 1px;*/
-  border-color: #CCC;
-  border-width: medium;
-  border-style: solid;
-  width: 100%;
-}
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
 
-th, td {
-  text-align: left;
-  padding: 4px;
-  border-width: medium;
-  border-style: solid;
-   border-color: #CCC;
-}
+  <style>
+  table {
+    border-collapse: collapse;
+    /*border: 1px;*/
+    border-color: #CCC;
+    border-width: medium;
+    border-style: solid;
+    width: 100%;
+  }
 
-tr:nth-child(even) {background-color: #f2f2f2;}
-</style>
+  th, td {
+    text-align: left;
+    padding: 4px;
+    border-width: medium;
+    border-style: solid;
+    border-color: #CCC;
+  }
+
+  tr:nth-child(even) {background-color: #f2f2f2;}
+  </style>
 
 </head>
-<body>
-  <?php
-  #mime_content_type("jpg")
-  $imagen ="image/png";
-  $base64 = base64_encode($imagen);
-  $src = 'data: image/jpg;base64,'.$base64;
-  ?>
-  <img src="logo.png"/>
-<?php //echo base64_encode("https://catrachosexitosos.files.wordpress.com/2011/04/400.jpeg");?>
-<h2>Incidencias...</h2>
+<body onload="window.print();">
+  <section class="invoice">
+    <div class="row">
+      <div class="col-xs-3">
+        <img class="rounded float-left" src="<?php echo base_url();?>images/SSA.jpg" alt="">
+      </div>
+      <div class="col-xs-6">
+        <h3 class="text-center">Control de Incidencias <br>
+        Hospital de la Mujer <br>
+        San Cristóbal de las Casas, Chiapas</h3>
+      </div>
+      <div class="col-xs-3"><img class="pull-right" src="<?php echo base_url();?>images/logo_salud_chiapas.jpg" alt=""></div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6">
+        <ul class="list-group list-group-unbordered">
+          <li class="list-group-item">
+            <b>Nombre:</b> <?php echo $personal[0]->SUFIJO.' '.$personal[0]->NOMBRES.' '.$personal[0]->APELLIDOS;?>
+          </li>
+          <li class="list-group-item">
+            <b>R.F.C.:</b> <?php echo $personal[0]->RFC;?>
+          </li>
+          <li class="list-group-item">
+            <b>Clave:</b> <?php echo $personal[0]->Codigo;?>
+          </li>
+        </ul>
+      </div>
+      <div class="col-xs-6">
+        <ul class="list-group list-group-unbordered">
+          <li class="list-group-item">
+            <b>Fecha de Ingreso:</b> <?php echo $personal[0]->FInicio;?>
+          </li>
+          <li class="list-group-item">
+            <b>Curp:</b> <?php echo $personal[0]->CURP;?>
+          </li>
+          <li class="list-group-item">
+            <b>Numero de Tarjeta:</b> <?php echo $personal[0]->NTarjeta;?>
+          </li>
+        </ul>
+      </div>
+    </div>
+	</section>
 
-<div style="overflow-x:auto;">
-  <div>
-    Nombre:
-  </div>
-  
+
+<div style="overflow-x:auto;">  
   <table>
       <?php
       $nombreMeses =array();

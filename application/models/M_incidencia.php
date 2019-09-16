@@ -175,8 +175,13 @@ class M_incidencia extends CI_Model {
 		return $query->result();
 	}
 
-	public function DatosCardex($IdPersonal)
+	public function DatosCardex($year,$tipo,$IdPersonal)
 	{
+		if ($tipo==2){
+			$where = "year(start) = ".$year;
+		} else {
+			$where = "`start` between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-31')";
+		}
 		$this->db->select('Date(t_regincidencia.start) start, Date(t_regincidencia.end) end, t_tipo_incidencia.Sigla');
 		$this->db->from('t_regincidencia');
 		$this->db->join('t_controlinc', 't_regincidencia.Folio = t_controlinc.Folio', 'left');
@@ -184,6 +189,21 @@ class M_incidencia extends CI_Model {
 		$this->db->join('tblusuario', 't_regincidencia.IdUsuario = tblusuario.IdUsuario', 'left');
 		$this->db->join('t_tipo_incidencia', 't_incidencia.IdSigla = t_tipo_incidencia.Id', 'left');
 		$this->db->where('IdPersonal', $IdPersonal);
+		$this->db->where($where);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function DatosPersonalesCardex($IdPersonal)
+	{		
+		$this->db->select('tblpersonal.SUFIJO, tblpersonal.NOMBRES, tblpersonal.APELLIDOS, tblpersonal.RFC, tblpersonal.CURP, 
+thorario.NTarjeta, tlaboral.Codigo, tlaboral.FInicio, tlaboral.IdTipoTrabajador Tipo');
+		$this->db->from('tblpersonal');
+		$this->db->join('thorario', 'tblpersonal.IdPersonal = thorario.IdPersonal', 'left');
+		$this->db->join('tlaboral', 'tblpersonal.IdPersonal = tlaboral.IdPersonal', 'left');
+		$this->db->where('tblpersonal.IdPersonal', $IdPersonal);
+		$this->db->where('thorario.Estatus', 1);
+		$this->db->where('tlaboral.status', 1);
 		$query = $this->db->get();
 		return $query->result();
 	}

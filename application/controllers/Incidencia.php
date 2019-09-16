@@ -11,6 +11,9 @@ class Incidencia extends CI_Controller {
 		$this->load->library('session');
 		$this->load->helper(array('url', 'form'));
 		$this->load->model(array('M_incidencia', 'M_plantilla', 'M_login'));
+		
+		$this->load->library('pdf');
+		
 		if (!$this->session->userdata("login")) {
 			redirect(base_url());
 		} else if ($this->session->userdata("IdPerfil")>3) {
@@ -19,13 +22,140 @@ class Incidencia extends CI_Controller {
 		}
 	}
 
+	public function datosParaReporteDeIncidencias($periodoInicio = 1,$periodoFinal = 12, $incidencias=array())
+  	{
+		$respuesta = new stdclass();
+		# incluye el arreglo de datos.
+		$respuesta->resultado = array();
+		# si contiene elementos existen errores.
+		$respuesta->errores    = array();
+
+		# validando Existencia de incidencias
+		if(count($incidencias) > 0)
+		{
+		$mesInicio = $periodoInicio;
+		$mesFinal  = $periodoFinal;
+
+         #######################################################################################
+         # 2.- Procesar Incidencias.
+		$resultado = array();
+
+		try
+		{
+			# 2.1- Recorriendo incidencias...
+		for($i = 0; $i<count($incidencias); $i++)
+		{
+			$fechaInicio = $incidencias[$i]->start;
+			$fechaFin    = $incidencias[$i]->end;
+			$fecha       = $fechaInicio;
+
+		# 2.2- obteniendo días del rango de fechas.
+			do
+			{
+
+			list($ano, $mes, $dia) = explode('-', $fecha);
+
+		//echo $ano.": ".$mes.": ".$dia;
+		//exit();
+			if(checkdate($mes,$dia,$ano))
+			{
+			$resultado[$ano][(int)$mes][(int)$dia] = $incidencias[$i]->Sigla;
+			$fecha = date('Y-m-d',mktime(0,0,0,$mes,$dia+1,$ano));
+			}
+			else
+			{
+			array_push($respuesa->errores,"Fecha Invalida: ".$incidencias[$i]->Sigla);
+			break;
+			}
+
+		}while ($fecha <= $fechaFin);
+
+			}# Fin del recorrido de insidencias...
+
+			#######################################################################################
+			# 3.- CREANDO RESULTADO FINAL.
+			$tabla = array();
+
+			# contador años
+			$year = 1;
+			foreach ($resultado as $key => $value)
+			{
+				# limitando el numero de meses a mostrar...
+			if($year>1)
+			{
+				$limiteInicial = 1 ;
+				$limiteFinal	= $mesFinal;
+			}
+			else
+			{
+				$limiteInicial = $mesInicio ;
+				$limiteFinal	= 12;
+				$year++;
+			}
+
+				# Mes
+			for($m=$limiteInicial;$m<=$limiteFinal;$m++)
+			{
+				# Día
+				for($d=1;$d<=31;$d++)
+				{
+					# asigancion
+				if(isset($resultado[$key][$m][$d]))
+					$tabla[$key][$m][$d] = $resultado[$key][$m][$d];
+				else
+					$tabla[$key][$m][$d] = "";
+				}
+			}
+			}
+
+			# Liberando Memoría...
+			$resultado = "";
+
+			# agregando Datos estructurados a la respuesta...
+			$respuesta->resultado = $tabla;
+		}
+		catch(Exception $e)
+		{
+			# Liberando Memoría...
+			$resultado = "";
+			$tabla	= "";
+			array_push($resultado->errores,"No se pudieron procesar correctamente las incidencias. Debido al siguiente error: ".$e->getMessage());
+		}
+		}
+
+		# 4.- Devolviendo arreglo de incidencias.
+		return $respuesta;
+	}
+
+	public function ImprimirCardex($IdPersonal)
+	{
+		$fecha = $this->input->post();
+		$year = $fecha['YearCardex'];
+		$inicio = 10;
+		$fin = 10;
+		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);	
+		$tipo = $datos['personal'][0]->Tipo;
+		if ($tipo==2) {	
+			$inicio = 1;
+			$fin = 12;
+		}
+		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$datos['datos']=$data->resultado;
+		$this->load->view('Incidencia/plantilla_oficio', $datos);
+
+		// Get output html
+        // $html = $this->output->get_output(); 
+		// $this->pdf->setPaper('letter', 'landscape');
+		// $this->pdf->loadHtml($html);
+		// $this->pdf->render();
+		// $this->pdf->stream('hola mundo.pdf');
+	}
+
 	//MODULO PARA CARDEX
 	function ProcesarIncidencia($IdPersonal){
 		// $data = $this->input->post();
-
 		$query = $this->M_incidencia->DatosCardex($IdPersonal);
-
-
 		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/IncidenciaReporte.php");
 		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/Reporte.php");
 		include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/IncidenciaReporte.php");
@@ -39,8 +169,8 @@ class Incidencia extends CI_Controller {
 		{
 			try
 			{
-				// Reporte::crearPDF("",$datosParaReporte->resultado);
-				Reporte::crearExcel($datosParaReporte->resultado);
+				Reporte::crearPDF("",$datosParaReporte->resultado);
+				// Reporte::crearExcel($datosParaReporte->resultado);
 			}
 			catch(Exception $e)
 			{
