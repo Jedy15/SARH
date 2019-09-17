@@ -313,7 +313,7 @@
 				</div>
 				<?php echo form_close(); ?>
 
-				<?php echo form_open('Incidencia/ImprimirCardex/'.$Persona[0]->IdPersonal);?>
+				<?php echo form_open('Incidencia/PdfCardex/'.$Persona[0]->IdPersonal);?>
 				<div class="modal modal-info fade" id="modal-cardex">
 					<div class="modal-dialog modal-sm">						
 						<div class="modal-content">
@@ -336,10 +336,10 @@
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-								<button type="submit" class="btn btn-outline" target="_blank"><i class="fa fa-print"></i> Imprimir</button>
-								<!-- <button type="submit" class="btn btn-primary pull-right" style="margin-right: 5px;"> -->
-            						<!-- <i class="fa fa-download"></i> Generate PDF -->
-          						<!-- </button> -->
+								<!-- <button type="submit" class="btn btn-outline" target="_blank"><i class="fa fa-print"></i> Imprimir</button> -->
+								<button type="submit" class="btn btn-primary pull-right" style="margin-right: 5px;">
+            						<i class="fa fa-download"></i> Generate PDF
+          						</button>
 							</div>
 						</div>
 					</div>
