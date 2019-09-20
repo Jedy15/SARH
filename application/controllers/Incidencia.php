@@ -133,7 +133,8 @@ class Incidencia extends CI_Controller {
 		$year = $fecha['YearCardex'];
 		$inicio = 10;
 		$fin = 10;
-		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);	
+		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
+		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
 		$tipo = $datos['usuario'][0]->Tipo;
 		if ($tipo==2) {	
 			$inicio = 1;
@@ -145,11 +146,14 @@ class Incidencia extends CI_Controller {
 		$this->load->view('Incidencia/v_plantilla_pdf', $datos);
 
 		// Get output html
-        // $html = $this->output->get_output(); 
-		// $this->pdf->setPaper('letter', 'landscape');
-		// $this->pdf->loadHtml($html);
-		// $this->pdf->render();
-		// $this->pdf->stream('HolaMundo.pdf');
+        $html = $this->output->get_output(); 
+		$this->pdf->setPaper('letter', 'landscape');
+		$this->pdf->loadHtml($html);
+		$this->pdf->render();
+		$this->pdf->stream('HolaMundo.pdf');
+		
+		redirect('Incidencia/Control/'.$IdPersonal,'refresh');
+		
 	}
 
 	//MODULO PARA CARDEX

@@ -68,7 +68,7 @@
   <center>
   <div class="row">
     <div class="column">
-      <img src="data:image/png;base64,<?php echo base64_encode(file_get_contents("l1.jpg")) ?>" width="50%">
+      <img src="data:image/png;base64,<?php echo base64_encode(file_get_contents(base_url()."images/SSA.jpg")) ?>" width="50%">
     </div>
 
     <div class="column">
@@ -77,20 +77,20 @@
     </div>
 
     <div class="column">
-      <img src="data:image/png;base64,<?php echo base64_encode(file_get_contents("l3.jpg")) ?>" width="40%">
+      <img src="data:image/png;base64,<?php echo base64_encode(file_get_contents(base_url()."images/logo_salud_chiapas.png")) ?>" width="40%">
       </div>
   </div>
   </center>
 
   <!-- # FOLIO -->
   <div class="right">
-    <span><b>FOLIO:&nbsp;</b></span>
+    <span><b>N° Tarjeta:&nbsp;</b></span><span><?php echo $usuario[0]->NTarjeta; ?></span>
   </div>
 
   <div class="clear"></div>
     <div class="row">
    <div class="column">
-     <span><b>NOMBRE:&nbsp;</b></span><span><?php echo $usuario[0]->NOMBRES; ?></span>
+     <span><b>NOMBRE:&nbsp;</b></span><span><?php echo   $usuario[0]->SUFIJO.' '.$usuario[0]->NOMBRES.' '.$usuario[0]->APELLIDOS; ?></span>
     </div>
     <div class="column">
      <span><b>R.F.C:&nbsp;</b></span><span><?php echo $usuario[0]->RFC; ?></span>
@@ -128,30 +128,27 @@
       $arregloVacio[""] = "";
       array_push($listaSiglas,)
    }*/
+  foreach($listaSiglas as $item)
+  {
+      if($siguenteFila == 0 )
+        echo $openRow;
 
-  // foreach($listaSiglas as $siglas=>$valor)
-  // {
-  //   
-  //   <?php
-  //     if($siguenteFila == 0 )
-  //       echo $openRow;
+      echo $openCold;
+      echo $item->Sigla;
+      echo $closeCold;
 
-  //     echo $openCold;
-  //     echo $siglas;
-  //     echo $closeCold;
+      echo $openCold;
+      echo $item->TipoIncidencia;      
+      echo $closeCold;
 
-  //     echo $openCold;
-  //     echo $valor;
-  //     echo $closeCold;
-
-  //     if($siguenteFila == 2)
-  //     {
-  //       echo $closeRow;
-  //       $siguenteFila = 0;
-  //     }
-  //     else
-  //       $siguenteFila++;
-  // }
+      if($siguenteFila == 2)
+      {
+        echo $closeRow;
+        $siguenteFila = 0;
+      }
+      else
+        $siguenteFila++;
+  }
   ?>
 </table>
   <div class="clear"></div>

@@ -144,7 +144,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
-							<span class="info-box-icon bg-teal"><i class="fa fa-wheelchair"></i></span>
+							<span class="info-box-icon bg-purple"><i class="fa fa-wheelchair"></i></span>
 							<div class="info-box-content">
 								<span class="info-box-text">Dias de Licencia Médica <?php echo date("Y"); ?></span>
 								<span class="info-box-number"><span id="IncapacidadAnual"></span><small> en el año</small></span>
