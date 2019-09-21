@@ -127,10 +127,11 @@ class Incidencia extends CI_Controller {
 		return $respuesta;
 	}
 
-	public function PdfCardex($IdPersonal)
+	public function PdfCardex()
 	{
-		$fecha = $this->input->post();
-		$year = $fecha['YearCardex'];
+		$post = $this->input->post();
+		$IdPersonal = $post['IdPersonal'];
+		$year = $post['YearCardex'];
 		$inicio = 10;
 		$fin = 10;
 		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
@@ -151,9 +152,31 @@ class Incidencia extends CI_Controller {
 		$this->pdf->loadHtml($html);
 		$this->pdf->render();
 		$this->pdf->stream('HolaMundo.pdf');
-		
-		redirect('Incidencia/Control/'.$IdPersonal,'refresh');
-		
+	}
+
+	function ImprimirCardex(){
+		$post = $this->input->post();
+		$IdPersonal = $post['IdPersonal'];
+		$year = $post['YearCardex'];
+		$inicio = 10;
+		$fin = 10;
+		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
+		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
+		$tipo = $datos['personal'][0]->Tipo;
+		if ($tipo==2) {	
+			$inicio = 1;
+			$fin = 12;
+		}
+		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$datos['datos']=$data->resultado;
+		$this->load->view('Incidencia/plantilla_oficio', $datos);
+	}
+
+	function ExcelCardex(){
+		$data = $this->input->post();
+		// $data['titulo'] = "Excel";
+		print_r ($data);
 	}
 
 	//MODULO PARA CARDEX

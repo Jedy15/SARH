@@ -166,7 +166,7 @@
 									<a href="<?php echo base_url(); ?>Plantilla" class="btn btn-warning"><i class="fa fa-step-backward"></i> Regresar</a>
 									<a href="<?php echo base_url(); ?>Incidencia/RegistroPase/<?php echo $Persona[0]->IdPersonal ?>" class="btn btn-success"><i class="fa fa-plus"></i> Captura de Pase</a>
 									<a href="<?php echo base_url(); ?>Incidencia/Registrar/<?php echo $Persona[0]->IdPersonal ?>" class="btn btn-primary"><i class="fa fa-plus"></i> Capturar Incidencia</a>
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-cardex"><i class="fa fa-file-text-o"></i> Generar Cardex</button>
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal-cardex"><i class="fa fa-file-text-o"></i> Cardex</button>
 								
 								</div>
 							</div>
@@ -313,7 +313,7 @@
 				</div>
 				<?php echo form_close(); ?>
 
-				<?php echo form_open('Incidencia/PdfCardex/'.$Persona[0]->IdPersonal);?>
+				<?php echo form_open('Incidencia/ImprimirCardex');?>
 				<div class="modal modal-info fade" id="modal-cardex">
 					<div class="modal-dialog modal-sm">						
 						<div class="modal-content">
@@ -327,19 +327,27 @@
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
-											<label>Seleccione año</label>
+											<label>Año</label>
 											<select class="form-control select2" required id="YearCardex" name="YearCardex" style="width: 100%;">
 											</select>
 										</div>
+										<input type="hidden" name="IdPersonal" value="<?php echo $Persona[0]->IdPersonal;?>">
+										
 									</div>
 								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-								<!-- <button type="submit" class="btn btn-outline" target="_blank"><i class="fa fa-print"></i> Imprimir</button> -->
-								<button type="submit" class="btn btn-primary pull-right" style="margin-right: 5px;">
-            						<i class="fa fa-download"></i> Generate PDF
+								<button type="submit" data-toggle="tooltip" data-original-title="Excel" class="btn btn-success" formaction="<?php echo base_url(); ?>Incidencia/ExcelCardex">
+            						<i class="fa fa-file-excel-o"></i> 
           						</button>
+								<button type="submit" data-toggle="tooltip" data-original-title="Pdf" class="btn btn-danger" formaction="<?php echo base_url(); ?>Incidencia/PdfCardex">
+            						<i class="fa fa-file-pdf-o"></i>
+          						</button>
+								<button type="submit" data-toggle="tooltip" data-original-title="Imprimir" class="btn btn-outline" formtarget="_blank">
+            						<i class="fa fa-print"></i>
+          						</button>
+								
 							</div>
 						</div>
 					</div>
@@ -419,6 +427,7 @@
 		$(function () {
     		//Initialize Select2 Elements
     		$('#YearCardex').select2({
+				placeholder: "Seleccione Año",
     			ajax: {
     				url: '<?php echo base_url();?>Incidencia/YearCardex/<?php echo $Persona[0]->IdPersonal ?>',
     				dataType: 'json'
@@ -699,11 +708,6 @@
 				}
 			});
     	}
-
-    	function ValidarIncidencia(th){
-    		var valor = th;
-    		// console.log(valor);
-		}
 		
 		function Incapacidad(mes, year) {
 			$.post("<?php echo base_url();?>Incidencia/LicenciaMedica", {
@@ -726,6 +730,15 @@
 				}
 			);
 		}
+
+		// function ImprimirCardex(){
+		// 	var IdPersonal = <?php //echo $Persona[0]->IdPersonal; ?>
+		// 	var Year = $('#YearCardex').val()
+		// 	// var Year = 2019;
+		// 	var url = "<?php //echo base_url(); ?>Incidencia/ImprimirCardex/"+IdPersonal+"/"+Year;
+		// 	window.open(url, '_blank');
+		// }
+
     </script>
 
     <script>
@@ -736,28 +749,31 @@
 			function(data, textStatus, xhr) {
 				var datos = $.parseJSON(data); 
 				if (datos[0].Total == 0) {
-					datos[0].Horas = '00:00';
-				}
+					datos[0].Horas = '0';
+				} else {
+					//covertimos de 1.5000 a 1.5
+					datos[0].Horas=Number.parseFloat(datos[0].Horas).toFixed(1)
+				}				
 				$("#TotalPaseSalida").html(datos[0].Total);
 				$('#TotalHrsSalida').html(datos[0].Horas);
 		}); //Fin post Cargar Pase de Salida
 
 		//-------- Carga Economicos
 		$.post('<?php echo base_url(); ?>Incidencia/Reposicion', 
-		{
-			IdPersonal: '<?php echo $Persona[0]->IdPersonal ?>',
-			tipo: 3
-		}, 
-		function(data, textStatus, xhr) {
-			var datos = $.parseJSON(data);
-			if(datos.mes[0].dias==null){
-				datos.mes[0].dias = 0;
-			}
-			if(datos.total[0].dias==null){
-				datos.total[0].dias = 0;
-			}
-			$("#TotalEconomico").html(datos.total[0].dias);
-			$("#TotalEconomicoMes").html(datos.mes[0].dias);
+			{
+				IdPersonal: '<?php echo $Persona[0]->IdPersonal ?>',
+				tipo: 3
+			}, 
+			function(data, textStatus, xhr) {
+				var datos = $.parseJSON(data);
+				if(datos.mes[0].dias==null){
+					datos.mes[0].dias = 0;
+				}
+				if(datos.total[0].dias==null){
+					datos.total[0].dias = 0;
+				}
+				$("#TotalEconomico").html(datos.total[0].dias);
+				$("#TotalEconomicoMes").html(datos.mes[0].dias);
 
 		});//Fin post Cargar Economicos
 

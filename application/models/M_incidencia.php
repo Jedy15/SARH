@@ -111,7 +111,7 @@ class M_incidencia extends CI_Model {
 
 	function ContarPaseSalida($IdPersonal){
 		$WHERE =  "t_incidencia.IdSigla = 16 AND MONTH(start)= MONTH(now()) and year(start) = year(now())";
-		$this->db->select('count(t_regincidencia.Id) Total, date_format(sum(sec_to_time(timestampdiff(second, start, end))), "%H:%i") Horas');
+		$this->db->select('count(t_regincidencia.Id) Total, sum(timestampdiff(minute, start, end)) / 60 Horas');
 		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
 		$this->db->where($WHERE);
 		$this->db->where('IdPersonal', $IdPersonal);

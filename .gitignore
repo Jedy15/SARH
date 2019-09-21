@@ -31,11 +31,8 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 /tests/results/
 
 ## ingnorar user_guide de codeigniter, los docs,
-user_guide
-docs
+/user_guide/
+/docs/'>0'/
 
 ## quitar los .xlsx
 *.xlsx
-
-## ignorares la libreria de Dompdf
-/application/libraries/dompdf/
