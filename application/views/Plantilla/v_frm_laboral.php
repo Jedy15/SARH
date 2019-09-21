@@ -90,7 +90,7 @@
               <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="form-group" id="SelectJuris">
                   <label for="IdJuris">Jurisdicción</label>
-                  <select class="form-control select2" name="Jurisdicción" id="IdJuris" style="width: 100%;" <?php if ($this->session->userdata("IdPerfil")>=3 ){echo 'disabled';} ?>>
+                  <select required class="form-control select2" name="Jurisdicción" id="IdJuris" style="width: 100%;" <?php if ($this->session->userdata("IdPerfil")>=3 ){echo 'disabled';} ?>>
                     <option value="">--Seleccione Jurisdicción--</option>
                   </select>
                 </div>
@@ -179,7 +179,7 @@
                     </div>
 
                     <div class="form-group" id="ListaSubseccion" style="display:none">
-                      <label for="IdTipoTrabajador">Subsección</label>
+                      <label for="Id_Subseccion">Subsección</label>
                       <select class="form-control select2" style="width: 100%;" name="Id_Subseccion" id="Id_Subseccion">
                         <option></option>
                       </select>
@@ -294,11 +294,12 @@
             data: datos
           });
 
-          <?php if ($datos_reg[0]->IdSeccion) { ?>
+          <?php if ($datos_reg[0]) { ?>
             var id = <?php echo $datos_reg[0]->IdSeccion ?>;
-            $('#IdSeccion').val(id);
-            $('#IdSeccion').trigger('change');
-            console.log(id);
+            if (id>0) {
+              $('#IdSeccion').val(id);
+              $('#IdSeccion').trigger('change');
+            }            
           <?php } ?>
         });
 
@@ -309,11 +310,12 @@
             data: datos
           });
 
-          <?php if ($datos_reg[0]->Id_Programa) { ?>
+          <?php if ($datos_reg[0]) { ?>
             var id = <?php echo $datos_reg[0]->Id_Programa ?>;
+
             $('#Id_Programa').val(id);
             $('#Id_Programa').trigger('change');
-            console.log(id);
+
           <?php } ?>
         });
 
@@ -392,7 +394,7 @@
 
               var selecionado = $('#IdSeccion option:selected').val();
               SelectSubseccion(selecionado);
-              $('#ListaSubseccion').show('slow/400/fast');
+              $('#ListaSubseccion').show('slow/400/fast');              
             });
 
 
@@ -408,15 +410,17 @@
 
                 var IdSeccion = <?php echo $datos_reg[0]->IdSeccion; ?>;
 
-                SelectSubseccion(IdSeccion);
-                var Id_Subseccion = <?php echo $datos_reg[0]->Id_Subseccion; ?>;
-                console.log(Id_Subseccion);
-                if(Id_Subseccion > 0){
-                  $('#ListaSubseccion').show();
-                } else {
-                  $('#ListaSubseccion').val(Id_Subseccion);
-                  $('#ListaSubseccion').trigger('change'); // Notify any JS components that the value changed
+                if (IdSeccion > 0) {
+                  SelectSubseccion(IdSeccion);
+                  var Id_Subseccion = <?php echo $datos_reg[0]->Id_Subseccion; ?>;
+                  if(Id_Subseccion > 0)
+                  {
+                    $('#ListaSubseccion').show();
+                    $('#Id_Subseccion').val(Id_Subseccion);
+                    $('#Id_Subseccion').trigger('change'); // Notify any JS components that the value changed
+                  }                  
                 }
+                
 
                 
 

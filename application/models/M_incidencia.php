@@ -156,7 +156,8 @@ class M_incidencia extends CI_Model {
 
 	function Editar_Evento($datos){
 		$this->db->where('Id', $datos['Id']);
-		$this->db->update('t_regincidencia', $datos);
+		$query = $this->db->update('t_regincidencia', $datos);
+		return $query;
 	}
 
 	function movimientos($IdPersonal){
@@ -175,14 +176,13 @@ class M_incidencia extends CI_Model {
 		return $query->result();
 	}
 
-	public function DatosCardex($year,$tipo,$IdPersonal)
-	{
+	public function DatosCardex($year,$tipo,$IdPersonal)	{
 		if ($tipo==2){
 			$where = "year(start) = ".$year;
 		} else {
 			$where = "`start` between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-31')";
 		}
-		$this->db->select('Date(t_regincidencia.start) start, Date(t_regincidencia.end) end, t_tipo_incidencia.Sigla');
+		$this->db->select('Date(t_regincidencia.start) start, if(TIMESTAMPDIFF(DAY, start, end) > 0, date_sub(date(end), INTERVAL 1 DAY), date(end)) end, t_tipo_incidencia.Sigla');
 		$this->db->from('t_regincidencia');
 		$this->db->join('t_controlinc', 't_regincidencia.Folio = t_controlinc.Folio', 'left');
 		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');

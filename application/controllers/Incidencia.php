@@ -245,7 +245,7 @@ class Incidencia extends CI_Controller {
 			# DATOS DEL USUARIO
 			$sheet->setCellValueByColumnAndRow(2,5 ,"NOMBRE:");
 			$sheet->getStyle("B5")->applyFromArray($tituloStyle);
-			$sheet->setCellValueByColumnAndRow(3,5 ,$empleado[0]->NOMBRES);
+			$sheet->setCellValueByColumnAndRow(3,5 ,$empleado[0]->SUFIJO.' '.$empleado[0]->NOMBRES.' '.$empleado[0]->APELLIDOS);
 			$sheet->mergeCells("C5:L5");
 
 			# DATOS DEL USUARIO
@@ -366,7 +366,7 @@ class Incidencia extends CI_Controller {
 
 				# Generar Archivo.
 			$writer = new Xlsx($spreadsheet);
-			$nombreArchivo = "Cardex-".date("Y-m-d h-i-s");
+			$nombreArchivo = "Cardex-".$empleado[0]->NTarjeta.' '.date("Y-m-d h-i-s");
 
 				# Cabecera para el nuevo archivo Excel Xlsx
 			header('Content-Type: application/vnd.ms-excel');
@@ -377,7 +377,7 @@ class Incidencia extends CI_Controller {
 		}
 		catch (\Exception $e)
 		{
-			print_r($e);
+			// print_r($e);
 		}
 	}
 
@@ -401,11 +401,13 @@ class Incidencia extends CI_Controller {
 		$this->load->view('Incidencia/v_plantilla_pdf', $datos);
 
 		// Get output html
+		$nombreArchivo = "Cardex-".$datos['usuario'][0]->NTarjeta.' '.date("Y-m-d h-i-s");
+
         $html = $this->output->get_output(); 
 		$this->pdf->setPaper('letter', 'landscape');
 		$this->pdf->loadHtml($html);
 		$this->pdf->render();
-		$this->pdf->stream('HolaMundo.pdf');
+		$this->pdf->stream($nombreArchivo);
 	}
 
 	function ImprimirCardex(){
@@ -424,6 +426,7 @@ class Incidencia extends CI_Controller {
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
 		$datos['datos']=$data->resultado;
+		// print_r($data->resultado);
 		$this->load->view('Incidencia/plantilla_oficio', $datos);
 	}
 
@@ -679,8 +682,14 @@ class Incidencia extends CI_Controller {
 		}
 		$datos['end'] = date ( 'Y-m-j' , $datos['end']);
 		$datos['nota'] = 'EDITADO: '.date("Y-m-d").' '.$datos['nota'];	
-		$this->M_incidencia->Editar_Evento($datos);
-		$this->session->set_flashdata("Aviso","Actualización Exitosa");
+		$data = $this->M_incidencia->Editar_Evento($datos);
+		if ($data == 1) {
+			$this->session->set_flashdata("Aviso","Actualización Exitosa");
+		} else {
+			$this->session->set_flashdata('error', 'Error');
+		}
+		
+		// $this->session->set_flashdata("Aviso","Actualización Exitosa");
 		redirect('Incidencia/Control/'.$IdPersonal);
 		// print_r($datos);
 	}

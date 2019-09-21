@@ -10,7 +10,12 @@ class M_plantilla extends CI_Model {
 		$this->load->library('session');
 	}
 
-	
+	function DeleteHorario($id)
+	{		
+		$this->db->where('IdHorario',$id);		
+		$query = $this->db->delete('thorario');
+		return $query;
+	}
 
 	function UnidadesJuris($clave){
 		$this->db->select('ID, CLUES, NOMBREUNIDAD');
@@ -21,7 +26,6 @@ class M_plantilla extends CI_Model {
 	}
 
 	function NumJurisdicciones(){
-// 		SELECT CLAVE_JURISDICCION FROM rh2018.tunidad group by CLAVE_JURISDICCION;
 		$this->db->select('CLAVE_JURISDICCION');
 		$this->db->group_by('CLAVE_JURISDICCION');
 		$query = $this->db->get('tunidad');

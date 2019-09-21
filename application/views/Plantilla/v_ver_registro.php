@@ -37,6 +37,22 @@
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/skins/_all-skins.min.css">
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <style>
+    .example-modal .modal {
+      position: relative;
+      top: auto;
+      bottom: auto;
+      right: auto;
+      left: auto;
+      display: block;
+      z-index: 1;
+    }
+
+    .example-modal .modal {
+      background: transparent !important;
+    }
+  </style>
 </head>
 
 <?php if($this->session->flashdata("error")):?>
@@ -330,7 +346,15 @@
                             $l2->fi = date('d',$create)." de ".$meses[date('n',$create)-1]. " de ".date('Y',$create);
                             echo $l2->fi;
                             ?></td>
-                            <td><?php if($this->session->userdata("IdPerfil")<>4 and $l2->Estatus==1 or $this->session->userdata("IdPerfil")<=2) { ?> <a href="<?php echo base_url(); ?>Plantilla/EditarHorario/<?php echo $l2->IdHorario?>" class="btn btn-block bg-teal btn-xs">Editar</a> <?php } ?> </td>
+                            <td>
+                              <div class="btn-group">
+                              <?php if($this->session->userdata("IdPerfil")<>4 and $l2->Estatus==1) { ?> 
+                                <a href="<?php echo base_url(); ?>Plantilla/EditarHorario/<?php echo $l2->IdHorario?>" class="btn btn-warning btn-sm" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
+                              <?php } else { ?> 
+                                <button type="button" onclick="CargarEliminacion(<?php echo $l2->IdHorario ?>);" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-trash-o"></i></button>
+                              <?php } ?>
+                              </div> 
+                            </td>
                           </tr>
                         <?php } ?>
                       </table>
@@ -555,6 +579,59 @@
             <?php echo form_close(); ?>
           </div>
         </div> <!--  fin  Ventana Modal -->
+
+        <?php echo form_open('Incidencia/Validar', 'id="autorizar-form" autocomplete="off"');?> 
+				<div class="modal modal-info fade" id="autorizar">
+					<div class="modal-dialog modal-sm">						
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title">Se necesita autorización</h4>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="Administrador">Usuario</label>
+									<input type="text" class="form-control" placeholder="Ingrese Usuario administrador" id="Administrador" name="Administrador" value="" required>
+								</div>
+								<div class="form-group">
+									<label for="Llave">Contraseña</label>
+									<input type="password" class="form-control" id="Llave" name="Llave" placeholder="Ingrese contraseña de Administrador" required>
+								</div> 
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+								<button type="submit" class="btn btn-outline">Autorizar</button>
+								<!-- <input type="submit" class="btn btn-success" value="Autorizar"> -->
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php echo form_close(); ?>
+        
+        <div class="modal modal-danger fade" id="modal-eliminar"> <!--  Inicio  Ventana Modal Baja -->
+          <div class="modal-dialog modal-sm">
+             <?php echo form_open('Plantilla/EliminarHorario/'.$datos_reg[0]->IdPersonal); ?>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title" id="titulo-eliminar">Eliminar</h4>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <p id='msg'>¿Está seguro que desea <b>Eliminar</b> este registro?</p>
+                  <input type="hidden" class="form-control" required="" name="IdHorario" id="IdHorario">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-outline" id='BtnEliminar'>Aceptar</button>
+              </div>
+            </div>
+            <?php echo form_close(); ?>
+          </div>
+        </div>
+        
       </section>
 
     </div>    
@@ -656,31 +733,63 @@
     $('.timepicker').timepicker({
       showInputs: false
     })
-  })
-</script>
+    })
+  </script>
 
-<script type="text/javascript">  
-  $(document).ready(function() {
-    $( "#asignar" ).click(function() {
-      $('#Expediente').modal('toggle');
+  <script type="text/javascript">  
 
-      $.post("<?php echo base_url(); ?>Plantilla/Exp", { }, function(data) {
-        $("#IdExp").html(data);
+    function CargarEliminacion(id) { 
+        <?php if ($this->session->userdata('IdPerfil')<=2) {?>
+          $('#modal-eliminar').modal('show');
+        <?php } else {  ?>
+          $('#autorizar').modal('show');
+        <?php } ?>
+        $('#IdHorario').val(id);
+     }
+
+     $("#autorizar-form").on("submit", function(e){
+    			$('#autorizar').modal('hide');
+    			e.preventDefault();
+    			$('#autorizar').on('hidden.bs.modal',function(event) {
+    				event.preventDefault();
+    				/* Act on the event */
+    				$.post("<?php echo base_url(); ?>Incidencia/Validar", {
+    					usuario : $('#Administrador').val(),
+    					pass : $('#Llave').val(),
+    					IdPersonal : <?php echo $datos_reg[0]->IdPersonal ?>
+              }, function(data) {
+                if (data == 1) {
+                  $('#modal-eliminar').modal('show');
+                } else {
+                  alert(data);
+                }
+              $('#autorizar-form').trigger('reset');
+            });
+    			});				
+			});
+
+    $(document).ready(function() {
+      $( "#asignar" ).click(function() {
+        $('#Expediente').modal('toggle');
+
+        $.post("<?php echo base_url(); ?>Plantilla/Exp", { }, function(data) {
+          $("#IdExp").html(data);
+        });
       });
-    });
-    $("#IdExp").change(function() {
-      IdExp = $('#IdExp').val();
-      $.post("<?php echo base_url(); ?>Plantilla/ContarExp", {IdExp : IdExp}, function(data) {
-        $('#NumExp').val(data);
+
+      $("#IdExp").change(function() {
+        IdExp = $('#IdExp').val();
+        $.post("<?php echo base_url(); ?>Plantilla/ContarExp", {IdExp : IdExp}, function(data) {
+          $('#NumExp').val(data);
+        });
+
       });
 
+      foto = function(){
+        $('#SubirFoto').modal('toggle');
+      }
     });
-
-    foto = function(){
-      $('#SubirFoto').modal('toggle');
-    }
-  });
-</script>
+  </script>
 
 </body>
 </html>

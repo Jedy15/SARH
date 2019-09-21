@@ -91,14 +91,14 @@
     <option selected="selected" value="">--Seleccione Primero un Grado Académico--</option>
   </select>
 </div>
-<div class="form-group" id="oculto1">
+<div class="form-group" id="oculto1" style="display:none">
  <label for="OtroEscuela">Otra Institución</label>
  <input type="text" class="form-control" name="OtroEscuela" id="OtroEscuela" placeholder="Nombre de la Institución" maxlength="80" size="80" value="<?php echo set_value('OtroEscuela',@$datos_reg[0]->OtroEscuela); ?>">
 </div>
 </div>
 
 <div class="col-md-3 col-sm-6 col-xs-12">
-  <div class="form-group" id="ocultoCedula">
+  <div class="form-group" id="ocultoCedula" style="display:none">
     <label for="Cedula">Cedula Profesional</label>
     <input type="text" class="form-control" name="Cedula" id="Cedula" placeholder="Cedula" maxlength="28" size="28" value="<?php echo set_value('Cedula',@$estudio[0]->Cedula); ?>">
   </div>
@@ -219,8 +219,8 @@
     })
   </script>
   <script>
-   $('#oculto1').hide();
-   $('#ocultoCedula').hide();	
+  //  $('#oculto1').hide();
+  //  $('#ocultoCedula').hide();	
 
    $(document).ready(function() {
     <?php if ($this->uri->segment(2)=='EditarEstudio') { ?>
@@ -230,6 +230,10 @@
      $("#IdGrado").val(Grado).change();
      CrearCarreras(Grado, Carrera);
      CrearEscuela(Grado, escuela);
+     if (Grado>= 2039849) {
+        $('#ocultoCedula').show();
+      }    
+
 			// $("#IdColegio").val(escuela).change();
 
 		<?php }?>
@@ -243,6 +247,9 @@
         $('#ocultoCedula').show('slow/400/fast', function() {
 
         });
+      } else {
+        $('#Cedula').val(null);
+        $('#ocultoCedula').hide();
       }
     });
 

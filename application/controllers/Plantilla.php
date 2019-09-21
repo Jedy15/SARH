@@ -15,6 +15,18 @@ class Plantilla extends CI_Controller {
 		}
 	}
 
+	public function EliminarHorario($IdPersonal)
+	{	
+		$id = $this->input->post('IdHorario');
+		$data = $this->M_plantilla->DeleteHorario($id);
+		if ($data==1) {
+			$this->session->set_flashdata('Aviso', 'Registro eliminado con Exito');			
+		} else {
+			$this->session->set_flashdata('error', 'Ocurrio un error al eliminar el registro <br> Intente nuevamente');
+		}
+		redirect('Plantilla/Ver/'.$IdPersonal,'refresh');
+	}
+
 	function CargarInstitutos(){
 		$GRADO = $this->input->post('Grado_1');
 		if($GRADO==2039842 or $GRADO==2039846 or $GRADO==2039843 or $GRADO==2039848 or $GRADO==2039847 or $GRADO==2039857){
