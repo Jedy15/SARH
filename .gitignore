@@ -14,7 +14,7 @@ user_guide_src/build/*
 user_guide_src/cilexer/build/*
 user_guide_src/cilexer/dist/*
 user_guide_src/cilexer/pycilexer.egg-info/*
-##/vendor/  edite para agregar al repositorio REMOTO
+##/vendor/  edité para agregar al repositorio REMOTO
 
 # IDE Files
 #-------------------------
@@ -32,7 +32,7 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 
 ## ingnorar user_guide de codeigniter, los docs,
 /user_guide/
-/docs/'>0'/
+/docs/
 
 ## quitar los .xlsx
 *.xlsx

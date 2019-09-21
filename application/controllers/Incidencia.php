@@ -1,8 +1,9 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class Incidencia extends CI_Controller {
 
@@ -10,10 +11,8 @@ class Incidencia extends CI_Controller {
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->helper(array('url', 'form'));
-		$this->load->model(array('M_incidencia', 'M_plantilla', 'M_login'));
-		
-		$this->load->library('pdf');
-		
+		$this->load->model(array('M_incidencia', 'M_plantilla', 'M_login'));		
+		$this->load->library('pdf');		
 		if (!$this->session->userdata("login")) {
 			redirect(base_url());
 		} else if ($this->session->userdata("IdPerfil")>3) {
@@ -127,6 +126,261 @@ class Incidencia extends CI_Controller {
 		return $respuesta;
 	}
 
+	public function GenerarCardexExcel($datos = array(),$empleado = array(),$listaSiglas = array())
+	{
+		$mesesDelAnio =array();
+		$mesesDelAnio[1] = "ENERO";
+		$mesesDelAnio[2] = "FEBRERO";
+		$mesesDelAnio[3] = "MARZO";
+		$mesesDelAnio[4] = "ABRIL";
+		$mesesDelAnio[5] = "MAYO";
+		$mesesDelAnio[6] = "JUNIO";
+		$mesesDelAnio[7] = "JULIO";
+		$mesesDelAnio[8] = "AGOSTO";
+		$mesesDelAnio[9] = "SEPTIEMBRE";
+		$mesesDelAnio[10] = "OCTUBRE";
+		$mesesDelAnio[11] = "NOVIEMBRE";
+		$mesesDelAnio[12] = "DICIEMBRE";
+
+		try
+		{
+			$spreadsheet = new Spreadsheet();
+			$sheet = $spreadsheet->getActiveSheet();
+
+			# Configuracion de imprecion
+			$sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+			$sheet->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+			# Margenes
+			$sheet->getPageMargins()->setTop(1);
+			$sheet->getPageMargins()->setRight(0.75);
+			$sheet->getPageMargins()->setLeft(0.75);
+			$sheet->getPageMargins()->setBottom(1);
+
+			$spreadsheet->getActiveSheet()->setShowGridlines(false);
+
+			# Estilos de celdas
+			$styleArray2 = [
+				'borders' =>
+				[
+					'allBorders' =>
+					[
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => ['argb' => '333333'],
+					]
+				]
+			];
+
+			$tituloStyle = [
+				'font' =>
+				[
+					'bold' => true
+				],
+				'alignment' => [
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+					'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+					'wrapText' => TRUE
+				]
+			];
+
+			# Estilo del Formato de columna de años.
+			$styleArray =
+			[
+				'font' =>
+				[
+					'bold' => true,
+					'size' => 16,
+				],
+				'alignment' => [
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+					'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+					'textRotation' => 90,
+					'wrapText' => TRUE
+				],
+				'borders' =>
+				[
+					'allBorders' =>
+					[
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => ['argb' => '333333'],
+					]
+				]
+			];
+
+			# Agregando Imagenes al documento.
+			$drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+			$drawing->setName('Logo');
+			$drawing->setDescription('A1');
+			$urlImg = $_SERVER['DOCUMENT_ROOT']."/sarh/images/SSA.jpg";
+			$drawing->setPath($urlImg);
+			$drawing->setCoordinates('A1');
+			$drawing->setHeight(70);
+			$drawing->setWorksheet($sheet);
+
+			$drawing2 = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+			$drawing2->setName('Logo2');
+			$drawing2->setDescription('L1');
+			$urlImg = $_SERVER['DOCUMENT_ROOT']."/sarh/images/logo_salud_chiapas.png";
+			$drawing2->setPath($urlImg);
+			$drawing2->setCoordinates('AB1');
+			$drawing2->setHeight(70);
+			$drawing2->setWorksheet($sheet);
+
+			# Titulo
+			$sheet->setCellValueByColumnAndRow(8,1 ,"CONTROL DE ASISTENCIA");
+			$sheet->getStyle("H1")->applyFromArray($tituloStyle);
+			$sheet->mergeCells("H1:Z1");
+
+			# Subtitulo
+			$sheet->setCellValueByColumnAndRow(8,2 ,"HOSPITAL DE LA MUJER, SAN CRISTOBAL DE LAS CASAS, CHIAPAS");
+			$sheet->getStyle("H2")->applyFromArray($tituloStyle);
+			$sheet->mergeCells("H2:Z2");
+
+			# FOLIO
+			$sheet->setCellValueByColumnAndRow(8,4 ,"TARJETA");
+			$sheet->getStyle("H4")->applyFromArray($tituloStyle);
+			$sheet->mergeCells("H4:K4");
+			$sheet->setCellValueByColumnAndRow(12,4 , $empleado[0]->NTarjeta);
+			$sheet->mergeCells("L4:T4");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,5 ,"NOMBRE:");
+			$sheet->getStyle("B5")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(3,5 ,$empleado[0]->NOMBRES);
+			$sheet->mergeCells("C5:L5");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,6 ,"CLAVE:");
+			$sheet->getStyle("B6")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(3,6 ,$empleado[0]->Codigo);
+			$sheet->mergeCells("C6:L6");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,7 ,"R.F.C:");
+			$sheet->getStyle("B7")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(3,7 ,$empleado[0]->RFC);
+			$sheet->mergeCells("C7:L7");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(14,5 ,"CURP:");
+			$sheet->getStyle("N5")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(17,5 ,$empleado[0]->CURP);
+			$sheet->mergeCells("N5:P5");
+			$sheet->mergeCells("Q5:W5");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(14,6 ,"FECHA INGRESO:");
+			$sheet->getStyle("N6")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(19,6 ,$empleado[0]->FInicio);
+			$sheet->mergeCells("N6:R6");
+			$sheet->mergeCells("S6:W6");
+
+			$siguenteFila = 0;
+			$indC = 2;
+
+			$posicionListaSiglas = 10;
+			$indF = $posicionListaSiglas;
+
+			foreach($listaSiglas as $item)
+			{
+				$sheet->setCellValueByColumnAndRow($indC,$indF ,$item->Sigla." : ".$item->TipoIncidencia);
+				$letraX =  Coordinate::stringFromColumnIndex($indC);
+				$letraY =  Coordinate::stringFromColumnIndex($indC+9);
+				$sheet->mergeCells($letraX.$indF.":".$letraY.$indF);
+
+				if($siguenteFila < 2)
+				{
+					$indC+=11;
+					$siguenteFila++;
+				}
+				else
+				{
+					$indF++;
+					$indC = 2;
+					$siguenteFila = 0;
+				}
+			}
+
+			$totalSiglas = round((count($listaSiglas)/3)+3);
+
+			# Establecer celdas para la tabla de datos.
+			$filaInicial     = $totalSiglas+$posicionListaSiglas;
+			$filaFinal = 0;
+			$columnaInicial  = 3;
+			$columnaFinal = 0;
+
+			$columnaIndice = $columnaInicial;
+
+			# Agregando encabezado de días
+			for($column=1;$column<32;$column++)
+			{
+				$sheet->setCellValueByColumnAndRow($columnaIndice,$filaInicial,$column);
+				$spreadsheet->getActiveSheet()->getColumnDimensionByColumn($columnaIndice)->setAutoSize(true);
+				$columnaIndice++;
+			}
+
+			# agregando formato a celdas de la tabla de datos
+			$letra =  Coordinate::stringFromColumnIndex($columnaInicial-2);
+			$letra2 =  Coordinate::stringFromColumnIndex($columnaIndice-1);
+			$sheet->getStyle($letra.$filaInicial.":".($letra2).$filaInicial)->applyFromArray($styleArray2);
+
+			# autosize columna de año y meses
+			$spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(4);       # Años
+			$spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true); # Meses
+
+			# Recorriendo datos...
+			$filaActual = $filaInicial;
+			foreach($datos as $key => $value) # Año
+			{
+				$fila    = $filaActual+1;
+				$columna = 2;
+
+				#Agregando estilo a la celda de año
+				$sheet->getStyle("A".$fila)->applyFromArray($styleArray);
+				# Formato  Etiqueta de año
+				$merge = "A".$fila.":"."A".($fila+(count($value))-1);
+				$sheet->setCellValueByColumnAndRow(1,$fila,$key);
+				$sheet->mergeCells($merge);
+
+				foreach($value as $key2 => $value2) # Mes
+				{
+					# insertando nombre de meses.
+					$sheet->setCellValueByColumnAndRow($columna,$fila ,$mesesDelAnio[$key2]);
+
+					# Recorriendo días...
+					foreach($value2 as $key3 => $value3) # Días
+					{
+						$sheet->setCellValueByColumnAndRow($key3+2,$fila,$value3);
+						$columnaFinal = $key3+2;
+					}
+
+					$fila++;
+				}
+			$filaActual += count($value);
+			$filaFinal = $filaActual;
+			}
+
+				# agregando formato a celdas de la tabla de datos
+			$resLetra =  Coordinate::stringFromColumnIndex($columnaInicial-2);
+			$resLetra2 =  Coordinate::stringFromColumnIndex($columnaFinal);
+			$sheet->getStyle($resLetra.$filaInicial.":".$resLetra2.$filaFinal)->applyFromArray($styleArray2);
+
+				# Generar Archivo.
+			$writer = new Xlsx($spreadsheet);
+			$nombreArchivo = "Cardex-".date("Y-m-d h-i-s");
+
+				# Cabecera para el nuevo archivo Excel Xlsx
+			header('Content-Type: application/vnd.ms-excel');
+			header('Content-Disposition: attachment;filename="'. $nombreArchivo .'.xlsx"');
+			header('Cache-Control: max-age=0');
+
+			$writer->save('php://output');
+		}
+		catch (\Exception $e)
+		{
+			print_r($e);
+		}
+	}
+
 	public function PdfCardex()
 	{
 		$post = $this->input->post();
@@ -174,37 +428,23 @@ class Incidencia extends CI_Controller {
 	}
 
 	function ExcelCardex(){
-		$data = $this->input->post();
-		// $data['titulo'] = "Excel";
-		print_r ($data);
-	}
-
-	//MODULO PARA CARDEX
-	function ProcesarIncidencia($IdPersonal){
-		// $data = $this->input->post();
-		$query = $this->M_incidencia->DatosCardex($IdPersonal);
-		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/IncidenciaReporte.php");
-		// include($_SERVER['DOCUMENT_ROOT']."/vendor/reportesOffice/Reporte.php");
-		include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/IncidenciaReporte.php");
-		include($_SERVER['DOCUMENT_ROOT']."/SARH/vendor/reportesOffice/Reporte.php");
-
-		$incidencias = new IncidenciaReporte();
-
-		$datosParaReporte = $incidencias->datosParaReporteDeIncidencias(10,10, $query);
-
-		if(count($datosParaReporte->errores)==0)
-		{
-			try
-			{
-				Reporte::crearPDF("",$datosParaReporte->resultado);
-				// Reporte::crearExcel($datosParaReporte->resultado);
-			}
-			catch(Exception $e)
-			{
-				print_r($e);
-			}
-
+		$post = $this->input->post();
+		$IdPersonal = $post['IdPersonal'];
+		$year = $post['YearCardex'];
+		$inicio = 10;
+		$fin = 10;
+		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
+		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
+		$tipo = $datos['usuario'][0]->Tipo;
+		if ($tipo==2) {	
+			$inicio = 1;
+			$fin = 12;
 		}
+		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$datos['datos']=$data->resultado;
+		$this->GenerarCardexExcel($datos['datos'], $datos['usuario'], $datos['listaSiglas']);
+		
 	}
 
 	//TIPOS DE INCIDENCIA	
