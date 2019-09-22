@@ -242,7 +242,7 @@
 									<div class="col-xs-12">
 										<div class="form-group">
 											<label>Lista de Incidencias</label>
-											<select class="form-control select2" onchange="ValidarIncidencia(this);" style="width: 100%;" required id="Id_Inc" name="Id_Inc">
+											<select class="form-control select2" style="width: 100%;" required id="Id_Inc" name="Id_Inc">
 												<option></option>
 											</select>
 										</div>
