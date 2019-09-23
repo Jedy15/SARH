@@ -654,6 +654,29 @@ class Plantilla extends CI_Controller {
 		}
 	}
 
+	#funcion para eliminar registro familiar
+	function EliminarFamiliar($id=null, $IdPersonal=null){
+		#solo para perfil de administrador o superior
+		if ($this->session->userdata('IdPerfil')<=2) {
+			if (is_numeric($id) and is_numeric($IdPersonal)) {
+				$respuesta = $this->M_plantilla->delete_familiar($id);
+				if ($respuesta) {
+					$this->session->set_flashdata("Aviso","Registro Familiar Eliminado.");
+				} else {
+					$this->session->set_flashdata("error","Error en la eliminarción <br> intentelo de nuevo.");
+				}				
+				redirect('Plantilla/ver/'.$IdPersonal);		
+			} else {
+				$this->session->set_flashdata("error","Datos Incorrectos");
+				redirect('Plantilla');	
+			}
+				
+		} else {
+			$this->session->set_flashdata('error', 'Acceso Denegado');
+			redirect('Plantilla','refresh');			
+		}
+	}
+
 	function NuevoFamiliar($id){
 		if ($this->input->post()) {
 			$datos = $this->input->post();

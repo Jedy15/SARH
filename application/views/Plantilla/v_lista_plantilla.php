@@ -116,6 +116,10 @@
 					type: 'POST'
 				},
 
+				"drawCallback": function() {
+					$('[data-toggle="tooltip"]').tooltip();
+				},
+
 				"scrollX": true,
 
 
@@ -128,7 +132,12 @@
 				columns: [
 				{ 
 					"data": null,
-					"defaultContent": '<div class="text-center"><button type="button" class="editar btn btn-success btn-xs"><i class="fa fa-calendar-check-o"></i></button><button type="button" class="ver btn btn-primary btn-xs"><i class="fa fa-folder-open-o"></i></button></div>',
+					"defaultContent": '<div class="text-center">'+
+						<?php if ($this->session->userdata('IdPerfil')<=3) { ?>
+						'<button type="button" class="editar btn btn-success btn-xs" data-toggle="tooltip" data-original-title="-> Incidencias"><i class="fa fa-calendar-check-o"></i></button>'+
+						<?php } ?>														
+						'<button type="button" class="ver btn btn-primary btn-xs" data-toggle="tooltip" data-original-title="Expediente"><i class="fa fa-folder-open-o"></i></button>'+
+					'</div>',				
 				},
 				{ "data": "NumExp" },
 				{ "data": "NOMBRES" },

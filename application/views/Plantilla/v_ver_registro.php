@@ -177,6 +177,7 @@
             </div>
             <!--  -->
           </div>
+
           <div class="col-md-4">
             <?php if ($horarioact) { ?>
               <div class="box box-info">
@@ -316,6 +317,7 @@
               </div><!-- /.box-header -->
               <div class="box-body">
                 <div class="tab-content">
+
                   <div class="tab-pane active" id="tab_1">
                     <div class="box-body table-responsive no-padding">
                       <table class="table table-hover">
@@ -328,9 +330,9 @@
                           <th>Dias Laborales</th>
                           <th>Tipo Registro</th>
                           <th>Apartir de</th>
-                          <th>Acción</th>
-                          <!-- <th>Jefe Inmediato</th> -->
-                          <!-- <th>Comisionado</th> -->
+                          <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                          <th>Acciones</th>
+                          <?php } ?>
                         </tr>
                         <?php foreach ($horario as $l2) { ?>
                           <tr>
@@ -348,11 +350,13 @@
                             ?></td>
                             <td>
                               <div class="btn-group">
-                              <?php if($this->session->userdata("IdPerfil")<>4 and $l2->Estatus==1) { ?> 
-                                <a href="<?php echo base_url(); ?>Plantilla/EditarHorario/<?php echo $l2->IdHorario?>" class="btn btn-warning btn-sm" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
+                              <?php if($this->session->userdata("IdPerfil")<4) { 
+                                if ($l2->Estatus==1) { ?> 
+                                  <a href="<?php echo base_url(); ?>Plantilla/EditarHorario/<?php echo $l2->IdHorario?>" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
                               <?php } else { ?> 
-                                <button type="button" onclick="CargarEliminacion(<?php echo $l2->IdHorario ?>);" class="btn btn-danger btn-sm" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-trash-o"></i></button>
-                              <?php } ?>
+                                  <button type="button" onclick="CargarEliminacion(<?php echo $l2->IdHorario ?>);" class="btn btn-danger btn-xs" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-trash-o"></i></button>
+                              <?php } 
+                              }?>
                               </div> 
                             </td>
                           </tr>
@@ -360,6 +364,7 @@
                       </table>
                     </div>
                   </div>
+
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="tab_2">
                     <div class="box-body table-responsive no-padding">
@@ -372,7 +377,9 @@
                           <th>Fecha Ingreso</th>
                           <th>Estatus</th>
                           <th>Observaciones</th>
-                          <th>Acción</th>
+                          <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                          <th>Acciones</th>
+                          <?php } ?>
                         </tr>
                         <?php foreach ($laboral as $l1){ ?>
                           <tr>
@@ -383,18 +390,18 @@
                             <td><?php if($l1->FInicio!=null){ echo date("d-M-Y", strtotime($l1->FInicio)); }?></td>
                             <td><?php echo $l1->Estatus?></td>
                             <td><?php echo $l1->nota ?></td>
-                            <!-- <td><?php //if ($l1->Comision == 0) { echo 'NO';} else{ echo 'SI';} ?></td> -->
-                            <td><?php if ($this->session->userdata("IdPerfil")<>4 and $l1->status==1 or $this->session->userdata("IdPerfil")<=2) {?>
-                              <a href="<?php echo base_url(); ?>Plantilla/EditarLaboral/<?php echo $l1->IdLaboral?>" class="btn btn-block bg-teal btn-xs">Editar</a>
-                              <?php if ($this->session->userdata("IdPerfil")<=2) { ?>
-                                <!-- <a href="<?php //echo base_url(); ?>plantilla/BajaLaboral/<?php //echo $l1->IdLaboral?>" class="btn btn-block btn-warning btn-xs">Inactivo</a> -->
-                              <?php }
-                            }?></td>
+                            <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                            <td><?php if ($l1->status==1) {?>
+                              <a href="<?php echo base_url(); ?>Plantilla/EditarLaboral/<?php echo $l1->IdLaboral?>" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
+                              <?php } ?>
+                            </td>
+                            <?php } ?>
                           </tr>
                         <?php } ?>
                       </table>
                     </div>
                   </div>
+
                   <div class="tab-pane" id="tab_3">
                     <div class="box-body table-responsive no-padding">
                       <table class="table table-hover">
@@ -404,11 +411,13 @@
                           <th>Cedula</th>
                           <th>Instituto</th>  
                           <?php if ($this->session->userdata('IdPerfil')==1) {?>
-                            <th>Registro</th>
-                            <th>Actualización</th>
-                            <th>Usuario</th>
+                          <th>Registro</th>
+                          <th>Actualización</th>
+                          <th>Usuario</th>
                           <?php } ?>
-                          <th>Acción</th>
+                          <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                          <th>Acciones</th>
+                          <?php } ?>
                         </tr>               
                         <?php foreach ($estudios as $l3){ ?>
                           <tr>
@@ -417,22 +426,25 @@
                             <td><?php if ($l3->Cedula) { echo $l3->Cedula; } else { echo "---";};  ?></td>  
                             <td><?php echo $l3->INSTITUCION ?></td>
                             <?php if ($this->session->userdata('IdPerfil')==1) {?>
-                              <td><?php echo $l3->FechaReg ?></td>
-                              <td><?php echo $l3->fact ?></td>
-                              <td><?php echo $l3->Usuario ?></td>                       
+                            <td><?php echo $l3->FechaReg ?></td>
+                            <td><?php echo $l3->fact ?></td>
+                            <td><?php echo $l3->Usuario ?></td>                       
                             <?php } ?>
+                            <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                            <td>
                             <?php if ($this->session->userdata("IdPerfil")<=3) {?>
-                              <td><a href="<?php echo base_url(); ?>Plantilla/EditarEstudio/<?php echo $l3->IdRegEstudio?>" class="btn btn-block bg-teal btn-xs">Editar</a></td>
+                              <a href="<?php echo base_url(); ?>Plantilla/EditarEstudio/<?php echo $l3->IdRegEstudio?>" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
                               <?php if ($this->session->userdata('IdPerfil')<=2) {?>
-                                <td><a href="<?php echo base_url(); ?>Plantilla/eliminarEstudio/<?php echo $l3->IdRegEstudio?>/<?php echo $datos_reg[0]->IdPersonal ?>" class="btn btn-block btn-danger btn-xs" data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash-o"></i></a></td>
+                              <a href="<?php echo base_url(); ?>Plantilla/eliminarEstudio/<?php echo $l3->IdRegEstudio?>/<?php echo $datos_reg[0]->IdPersonal ?>" class="btn btn-danger btn-xs" data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash-o"></i></a>
                               <?php } ?>
-
-                            <?php } ?>              
+                             </td>
+                            <?php } } ?>              
                           </tr>
                         <?php } ?>
                       </table>
                     </div>
                   </div>
+
                   <div class="tab-pane" id="tab_4">
                     <div class="box-body table-responsive no-padding">
                       <table class="table table-hover">
@@ -443,9 +455,12 @@
                           <th>Parentesco</th>
                           <th>Observación</th>
                           <?php if ($this->session->userdata('IdPerfil')==1) {?>
-                            <th>Registro</th>
-                            <th>Actualización</th>
-                            <th>Usuario</th>
+                          <th>Registro</th>
+                          <th>Actualización</th>
+                          <th>Usuario</th>
+                          <?php } ?>
+                          <?php if($this->session->userdata("IdPerfil")<4) { ?>
+                          <th>Acciones</th>
                           <?php } ?>
                         </tr>
                         <?php foreach ($familiar as $l4) { ?>
@@ -463,8 +478,13 @@
                               <td><?php echo $l4->Fecha ?></td>
                               <td><span data-toggle="tooltip" data-original-title="<?php echo $l4->user.' '.$l4->Apellido ?>"><?php echo $l4->Usuario ?></span></td>
                             <?php } ?>
-                            <?php if ($this->session->userdata("IdPerfil")<=3) {?>
-                              <td><a href="<?php echo base_url(); ?>Plantilla/EditarFamiliar/<?php echo $l4->IdFamiliar?>" class="btn btn-block bg-teal btn-xs">Editar</a></td>
+                            <?php if ($this->session->userdata("IdPerfil")<4) {?>
+                              <td>
+                                <a href="<?php echo base_url(); ?>Plantilla/EditarFamiliar/<?php echo $l4->IdFamiliar?>" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Editar"><i class="fa fa-edit"></i></a>
+                            <?php if ($this->session->userdata("IdPerfil")<=2) {?>
+                                <a href="<?php echo base_url(); ?>Plantilla/EliminarFamiliar/<?php echo $l4->IdFamiliar?>/<?php echo $datos_reg[0]->IdPersonal ?>" class="btn btn-danger btn-xs" data-toggle="tooltip" data-original-title="Eliminar"><i class="fa fa-trash-o"></i></a>
+                            <?php }?>
+                              </td>
                             <?php } ?>
                           </tr>
                         <?php } ?>
@@ -739,34 +759,35 @@
   <script type="text/javascript">  
 
     function CargarEliminacion(id) { 
-        <?php if ($this->session->userdata('IdPerfil')<=2) {?>
-          $('#modal-eliminar').modal('show');
-        <?php } else {  ?>
-          $('#autorizar').modal('show');
-        <?php } ?>
-        $('#IdHorario').val(id);
-     }
+      <?php if ($this->session->userdata('IdPerfil')<=2) {?>
+        $('#modal-eliminar').modal('show');
+      <?php } else {  ?>
+        $('#autorizar').modal('show');
+      <?php } ?>
+      $('#IdHorario').val(id);
+    }
 
      $("#autorizar-form").on("submit", function(e){
-    			$('#autorizar').modal('hide');
-    			e.preventDefault();
-    			$('#autorizar').on('hidden.bs.modal',function(event) {
-    				event.preventDefault();
-    				/* Act on the event */
-    				$.post("<?php echo base_url(); ?>Incidencia/Validar", {
-    					usuario : $('#Administrador').val(),
-    					pass : $('#Llave').val(),
-    					IdPersonal : <?php echo $datos_reg[0]->IdPersonal ?>
-              }, function(data) {
-                if (data == 1) {
-                  $('#modal-eliminar').modal('show');
-                } else {
-                  alert(data);
-                }
-              $('#autorizar-form').trigger('reset');
-            });
-    			});				
-			});
+    		$('#autorizar').modal('hide');
+    		e.preventDefault();
+    		$('#autorizar').on('hidden.bs.modal',function(event) {
+    			event.preventDefault();
+    			/* Act on the event */
+    			$.post("<?php echo base_url(); ?>Incidencia/Validar", {
+    				usuario : $('#Administrador').val(),
+    				pass : $('#Llave').val(),
+    				IdPersonal : <?php echo $datos_reg[0]->IdPersonal ?>
+          }, function(data) {
+            if (data == 1) {
+              $('#modal-eliminar').modal('show');
+            } else {
+              alert(data);
+            }
+            $('#autorizar-form').trigger('reset');
+          });
+    		});				
+		  });
+
 
     $(document).ready(function() {
       $( "#asignar" ).click(function() {

@@ -336,6 +336,12 @@ class M_plantilla extends CI_Model {
 		$this->db->insert('tblregestudio', $data);
 	}
 
+	function delete_familiar($id){
+		$this->db->where('IdFamiliar', $id);
+		$query = $this->db->delete('tfamiliar');
+		return $query;
+	}
+
 	function insert_familiar($data){
 		$this->db->insert('tfamiliar', $data);
 	}

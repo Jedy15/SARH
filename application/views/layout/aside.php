@@ -1,17 +1,17 @@
 <?php 
 $id = $this->session->userdata('id');
-// $nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$id.'/foto'.$id.'.JPG';
-$nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
+$nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$id.'/foto'.$id.'.JPG';
+// $nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
 
 
 if (file_exists($nombre_fichero)) {
-	// $ruta = '//'.$_SERVER["SERVER_NAME"].'/images/user/'.$id.'/foto'.$id.'.JPG';
-	$ruta = '//'.$_SERVER["SERVER_NAME"].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
+	$ruta = '//'.$_SERVER["SERVER_NAME"].'/images/user/'.$id.'/foto'.$id.'.JPG';
+	// $ruta = '//'.$_SERVER["SERVER_NAME"].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
 
 } else {
-	// $ruta = "//".$_SERVER["SERVER_NAME"].'/images/user/avatar.png';
-	$ruta = "//".$_SERVER["SERVER_NAME"].'/SARH/images/user/avatar.png';
-
+	$ruta = "//".$_SERVER["SERVER_NAME"].'/images/user/avatar.png';
+	// $ruta = "//".$_SERVER["SERVER_NAME"].'/SARH/images/user/avatar.png';
+// 
 } 
 ?>		
 <aside class="main-sidebar">
@@ -56,7 +56,7 @@ if (file_exists($nombre_fichero)) {
 					<ul class="treeview-menu">
 						<li><a href="<?php echo base_url();?>Reporte"><i class="fa fa-circle-o"></i>Dashboard</a></li>
 						<li><a href="<?php echo base_url();?>Reporte/DetalleIncidencias"><i class="fa fa-circle-o"></i>Detalle de Incidencia</a></li>
-						<li><a href="<?php echo base_url();?>Reporte/IncidenciaGral"><i class="fa fa-circle-o"></i>Incidencia General</a></li>
+						<!-- <li><a href="<?php //echo base_url();?>Reporte/IncidenciaGral"><i class="fa fa-circle-o"></i>Incidencia General</a></li> -->
 						<li><a href="<?php echo base_url();?>Reporte/Tarjeta"><i class="fa fa-circle-o"></i>Tarjetas</a></li>
 					</ul>
 				</li>

@@ -33,14 +33,23 @@ class M_incidencia extends CI_Model {
 		return $this->db->insert('t_tipo_incidencia');
 	}
 
-	function YearCardex($IdPersonal){
+	function YearCardex1($IdPersonal){
+		$this->db->select('min(date(start)) primero, max(date(end)) ultimo');
+		$this->db->where('IdPersonal', $IdPersonal);
+		$query = $this->db->get('t_regincidencia');
+		return $query->result();
+	}
+
+	function YearCardex2($IdPersonal){
 		$this->db->distinct('year(start)');
-		$this->db->select('year(start) id, year(start) text');
+		$this->db->select('year(start) id,  year(start) text');
 		$this->db->where('IdPersonal', $IdPersonal);
 		$this->db->order_by('start', 'desc');
 		$query = $this->db->get('t_regincidencia');
 		return $query->result();
 	}
+
+	
 
 	function ValidarFecha($fecha, $IdPersonal){
 		$this->db->select('Id');

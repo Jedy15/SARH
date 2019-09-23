@@ -65,9 +65,7 @@
 								<table id="example" class="table table-bordered table-striped">
 									<thead>
 										<tr>
-											<?php if ($this->session->userdata('IdPerfil')<=3) { ?>
-												<th>Acción</th>
-											<?php } ?>	
+											<th>Acción</th>
 											<th>N° Tarjeta</th>
 											<th>N° Expediente</th>
 											<th>Nombre</th>
@@ -77,8 +75,10 @@
 											<th>Estatus</th>
 											<th>Situación Laboral</th>
 											<th>Rama</th>
+											<?php if ($this->session->userdata('IdPerfil')<4) { ?>
 											<th>Fecha Actualización</th>
 											<th>Usuario</th>
+											<?php }?>
 										</tr>
 									</thead>
 								</table>
@@ -130,6 +130,10 @@
 					type: 'POST'
 				},
 
+				"drawCallback": function( settings ) {
+					$('[data-toggle="tooltip"]').tooltip();
+				},
+
 				"scrollX": true,
 
 				"columnDefs": [
@@ -138,12 +142,16 @@
 				],
 
 				columns: [
-				<?php if ($this->session->userdata('IdPerfil')<=3) { ?>
 					{ 
-						"data": null,
-						"defaultContent": '<div class="text-center"><button type="button" class="editar btn btn-success btn-xs"><i class="fa fa-calendar-check-o"></i></button><button type="button" class="ver btn btn-primary btn-xs"><i class="fa fa-folder-open-o"></i></button></div>'
-					},
-				<?php } ?>
+					"data": null,
+					"defaultContent": '<div class="text-center">'+
+						<?php if ($this->session->userdata('IdPerfil')<=3) { ?>
+						'<button type="button" class="editar btn btn-success btn-xs" data-toggle="tooltip" data-original-title="-> Incidencias"><i class="fa fa-calendar-check-o"></i></button>'+
+						<?php } ?>														
+						'<button type="button" class="ver btn btn-primary btn-xs" data-toggle="tooltip" data-original-title="Expediente"><i class="fa fa-folder-open-o"></i></button>'+
+					'</div>',
+						
+						},
 				{ "data":"NTarjeta",
 				"render": function ( data, type, row, meta ) {
 					return 'T'+data;
@@ -155,9 +163,12 @@
 				{ "data": "PUESTO" },
 				{ "data": "Estatus" },
 				{ "data": "TIPOTRABAJADOR" },
-				{ "data": "RAMA" },
+				{ "data": "RAMA" } <?php if ($this->session->userdata('IdPerfil')<4) { ?>,
+				
 				{ "data": "Fecha" },
-				{ "data": "Usuario" }					
+				{ "data": "Usuario" }
+				<?php } ?>														
+								
 				],
 
 				<?php if ($this->session->userdata('IdPerfil')<=3) { ?>

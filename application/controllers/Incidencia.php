@@ -60,6 +60,7 @@ class Incidencia extends CI_Controller {
 			{
 			$resultado[$ano][(int)$mes][(int)$dia] = $incidencias[$i]->Sigla;
 			$fecha = date('Y-m-d',mktime(0,0,0,$mes,$dia+1,$ano));
+			// echo $fecha;
 			}
 			else
 			{
@@ -426,6 +427,7 @@ class Incidencia extends CI_Controller {
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
 		$datos['datos']=$data->resultado;
+		// print_r($query);
 		// print_r($data->resultado);
 		$this->load->view('Incidencia/plantilla_oficio', $datos);
 	}
@@ -500,7 +502,36 @@ class Incidencia extends CI_Controller {
 	}
 
 	function YearCardex($IdPersonal){
-		$data['results'] = $this->M_incidencia->YearCardex($IdPersonal);
+		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
+		$tipo = $datos['personal'][0]->Tipo;
+		if ($tipo==2) {
+			$data['results'] = $this->M_incidencia->YearCardex2($IdPersonal);
+		} else {
+			$buscar = $this->M_incidencia->YearCardex1($IdPersonal);
+			$inicio = date('n', strtotime($buscar[0]->primero));
+			$fin = date('n', strtotime($buscar[0]->ultimo));
+			$yearfin = null;
+			$yearinicio = null;
+			if ($inicio>9) {
+				$yearinicio = date('Y',strtotime($buscar[0]->primero))+1;
+			} else {
+				$yearinicio = date('Y',strtotime($buscar[0]->primero));
+			}
+			if ($fin>9) {
+				$yearfin = date('Y',strtotime($buscar[0]->ultimo)) + 1;
+			} else {
+				$yearfin = date('Y',strtotime($buscar[0]->ultimo));
+			}
+			// echo 'Año Fin: '.$yearfin;
+			// echo $yearinicio;
+			$i = 0;
+			while ($yearinicio <= $yearfin) {
+				$data['results'][$i]['id'] = $yearinicio;
+				$data['results'][$i]['text'] = $yearinicio;
+				$yearinicio++;
+				$i++;
+			}
+		}		
 		echo json_encode($data);
 	}
 

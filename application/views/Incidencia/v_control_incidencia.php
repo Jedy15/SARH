@@ -632,7 +632,9 @@
     			}
     			if (Registro.nota) {
     				$('#nota').val(Registro.nota);
-    			}
+    			} else {
+    				$('#nota').val(null);
+				}
 
 				$('#Id_Inc').val(Registro.Id_Inc); // Select the option with a value of '1'
 				$('#Id_Inc').trigger('change'); // Notify any JS components that the value changed
