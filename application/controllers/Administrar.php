@@ -7,7 +7,10 @@ class Administrar extends CI_Controller {
 		parent::__construct();
 		$this->load->helper(array('form', 'url'));
 		$this->load->model(array('M_administrar','M_inicio'));
-		$this->load->library(array('session'));
+        $this->load->library(array('session'));
+        if (!$this->session->userdata("login")) {
+			redirect(base_url());
+		}
 		if ($this->session->userdata("IdPerfil")>3) {
 			$this->session->set_flashdata("error","ACCESO DENEGADO");
 			redirect('Plantilla');	
@@ -188,7 +191,6 @@ class Administrar extends CI_Controller {
     	$this->session->set_flashdata("Aviso","Registro Eliminado");
     	redirect('Administrar/Funcion');
     }
-
 
     function EditarFuncion(){
     	$datos = $this->input->post();

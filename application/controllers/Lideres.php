@@ -8,9 +8,9 @@ class Lideres extends CI_Controller {
 		$this->load->helper(array('form', 'url'));
 		$this->load->model(array('M_lider'));
 		$this->load->library(array('session'));
-		// if (!$this->session->userdata("login")) {
-			// redirect(base_url());
-		// }		
+		if (!$this->session->userdata("login")) {
+			redirect(base_url());
+		}		
 	}
 
 	function index(){

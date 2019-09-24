@@ -1,15 +1,12 @@
 <?php 
 $id = $this->session->userdata('id');
-// $nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$id.'/foto'.$id.'.JPG';
-$nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
+$nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$id.'/foto'.$id.'.JPG';
 
 $state = 0;
 if (file_exists($nombre_fichero)) {
-  // $ruta = '//'.$_SERVER["SERVER_NAME"].'/images/user/'.$id.'/foto'.$id.'.JPG';
-  $ruta = '//'.$_SERVER["SERVER_NAME"].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';  
+  $ruta = '//'.$_SERVER["SERVER_NAME"].'/images/user/'.$id.'/foto'.$id.'.JPG';
 } else {
-  // $ruta = "//".$_SERVER["SERVER_NAME"].'/images/user/avatar.png';
-  $ruta = "//".$_SERVER["SERVER_NAME"].'/SARH/images/user/avatar.png';
+  $ruta = "//".$_SERVER["SERVER_NAME"].'/images/user/avatar.png';
 
   $state ++;
 } 

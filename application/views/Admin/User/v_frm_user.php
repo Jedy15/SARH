@@ -48,6 +48,14 @@
   </div>
 <?php endif; ?>
 
+<?php if($this->session->flashdata("Aviso")):?>
+	<div class="alert alert-info alert-dismissible">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		<h4><i class="icon fa fa-thumbs-o-up"></i> Exito!</h4>
+		<?php echo $this->session->flashdata("Aviso")?>
+	</div>
+<?php endif; ?>
+
 <body class="hold-transition skin-blue sidebar-collapse sidebar-mini">
   <div class="wrapper">
     <?php
@@ -207,7 +215,7 @@
                     <div class="row">
                       <div class="col-xs-12">
                         <div class="form-group">
-                          <input type="file" id="foto" name="foto" accept="image/*" required="" capture="camera">
+                          <input type="file" id="foto" name="foto" accept=".jpg, .jpeg, .png, .gif" required="" capture="camera">
                           <p class="help-block">Seleccione una imagen para su foto de perfil.</p>
                         </div>
                       </div>

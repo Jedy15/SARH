@@ -8,6 +8,9 @@ class Reporte extends CI_Controller {
 		$this->load->library('session');
 		$this->load->helper(array('url', 'form'));
 		$this->load->model(array('M_plantilla', 'm_login', 'M_reporte'));
+		if (!$this->session->userdata("login")) {
+			redirect(base_url());
+		}
 	}
 
 	function index(){

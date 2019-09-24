@@ -34,48 +34,75 @@ class Usuarios extends CI_Controller {
 		echo json_encode($datos);
 	}
 
-	function UploadFotoPerfil($Id){
-		// $nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/SARH/images/user/'.$Id;
-		$nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$Id;
-
-		if (!file_exists($nombre_fichero)) {
-			// echo "El fichero $nombre_fichero No existe";
-			mkdir($nombre_fichero, 0755, true);
+	function UploadFotoPerfil($Id=null){
+		if ($Id==null) {
+			$this->session->set_flashdata("error","Error en datos");
+			redirect('Plantilla');	
 		}
-		// echo "continua";
-		$config['upload_path']          = $nombre_fichero;
-		$config['allowed_types']        = 'gif|jpg|jpeg|png';
-		$config['max_size']             = 10240;
-		$config['file_name']			= 'foto.JPG';
-		$config['overwrite']			= TRUE;
+		
+		if (is_numeric($Id)) {
+			if ($Id==$this->session->userdata("id")) {
+				$nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$Id;
+				if (!file_exists($nombre_fichero)) {
+					mkdir($nombre_fichero, 0755, true);
+				}
+				$config['upload_path']          = $nombre_fichero;
+				$config['allowed_types']        = 'gif|jpg|jpeg|png';
+				$config['max_size']             = 10240;
+				$config['file_name']			= 'foto.JPG';
+				$config['overwrite']			= TRUE;
 
-		$this->load->library('upload', $config);
-		if ( ! $this->upload->do_upload('foto')){
-			$error = $this->upload->display_errors();
-			$this->session->set_flashdata("error","Error al cargar Foto <br>".$error);
-			redirect('Usuarios/perfil/'.$Id,'refresh');
+				$this->load->library('upload', $config);
+				if ( ! $this->upload->do_upload('foto')){
+					$error = $this->upload->display_errors();
+					$this->session->set_flashdata("error","Error al cargar Foto <br>".$error);
+					redirect('Usuarios/perfil/'.$Id,'refresh');
+				} else {
+					$exito = $this->crearMiniatura($Id);
+					if ($exito) {
+						$this->session->set_flashdata("Aviso",'Foto Actualizada');
+					} else {
+						$this->session->set_flashdata("error","Error al cargar Foto");
+					}
+					redirect('Usuarios/perfil/'.$Id,'refresh');
+					
+				}
+			} else {
+				$this->session->set_flashdata("error",'Datos No validos');			
+				redirect('Plantilla');
+			}				
 		} else {
-			$this->crearMiniatura($Id);
-			redirect('Usuarios/perfil/'.$Id,'refresh');
-		}
+			$this->session->set_flashdata("error",'Datos No validos');			
+			redirect('Plantilla');
+		}		
 	}
 
 	function crearMiniatura($Id){
-		$config['image_library'] = 'gd2';
-		// $config['source_image'] =  $_SERVER["DOCUMENT_ROOT"]."/SARH/images/user/".$Id."/foto.JPG";
-		$config['source_image'] =  $_SERVER["DOCUMENT_ROOT"]."/images/user/".$Id."/foto.JPG";
+		if (is_numeric($Id)) {
+			if ($Id==$this->session->userdata("id")) {
+				$config['image_library'] = 'gd2';
+				$config['source_image'] =  $_SERVER["DOCUMENT_ROOT"]."/images/user/".$Id."/foto.JPG";
+				$config['create_thumb'] = TRUE;
+				$config['thumb_marker']= $Id;
+				$config['width'] = 128;
+				$config['height'] = 128;
 
-		$config['create_thumb'] = TRUE;
-        $config['thumb_marker']= $Id;//captura_thumb.png
-        $config['width'] = 128;
-        $config['height'] = 128;
-
-        $this->load->library('image_lib', $config); 
-        if ( ! $this->image_lib->resize())
-        {
-        	$error = $this->image_lib->display_errors();
-        	$this->session->set_flashdata("error",$error);
-        }
+				$this->load->library('image_lib', $config); 
+				if ( ! $this->image_lib->resize())
+				{
+					$error = $this->image_lib->display_errors();
+					$this->session->set_flashdata("error",$error);
+				} else {
+					return unlink($config['source_image']);					
+				}
+			} else {
+				$this->session->set_flashdata("error",'Datos No validos');			
+				redirect('Plantilla');
+			}				
+		} else {
+			$this->session->set_flashdata("error",'Datos No validos');			
+			redirect('Plantilla');
+		}
     }
 
     function nuevo(){
@@ -205,19 +232,11 @@ class Usuarios extends CI_Controller {
 					redirect('usuarios/perfil/'.$id);
 				}
 			} else { //cargamos el formulario con los datos del usuario a editar
-				// $nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
 				$nombre_fichero = $_SERVER['DOCUMENT_ROOT'].'/images/user/'.$id.'/foto'.$id.'.JPG';
-
-
-
 				if (file_exists($nombre_fichero)) {
 					$data['ruta'] = '//'.$_SERVER["SERVER_NAME"].'/images/user/'.$id.'/foto'.$id.'.JPG';
-					// $data['ruta'] = '//'.$_SERVER["SERVER_NAME"].'/SARH/images/user/'.$id.'/foto'.$id.'.JPG';
-
 				} else {
 					$data['ruta'] = "//".$_SERVER["SERVER_NAME"].'/images/user/avatar.png';
-					// $data['ruta'] = "//".$_SERVER["SERVER_NAME"].'/SARH/images/user/avatar.png';
-
 				}
 
 				$data['titulo']='Perfil';
