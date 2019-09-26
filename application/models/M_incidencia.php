@@ -189,7 +189,7 @@ class M_incidencia extends CI_Model {
 		if ($tipo==2){
 			$where = "year(start) = ".$year;
 		} else {
-			$where = "`start` between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-31')";
+			$where = "`start` between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-30')";
 		}
 		$this->db->select('Date(t_regincidencia.start) start, if(TIMESTAMPDIFF(DAY, start, end) > 0, date_sub(date(end), INTERVAL 1 DAY), date(end)) end, t_tipo_incidencia.Sigla');
 		$this->db->from('t_regincidencia');
@@ -199,6 +199,7 @@ class M_incidencia extends CI_Model {
 		$this->db->join('t_tipo_incidencia', 't_incidencia.IdSigla = t_tipo_incidencia.Id', 'left');
 		$this->db->where('IdPersonal', $IdPersonal);
 		$this->db->where($where);
+		$this->db->order_by('start', 'asc');
 		$query = $this->db->get();
 		return $query->result();
 	}
@@ -206,10 +207,12 @@ class M_incidencia extends CI_Model {
 	public function DatosPersonalesCardex($IdPersonal)
 	{		
 		$this->db->select('tblpersonal.SUFIJO, tblpersonal.NOMBRES, tblpersonal.APELLIDOS, tblpersonal.RFC, tblpersonal.CURP, 
-thorario.NTarjeta, tlaboral.Codigo, tlaboral.FInicio, tlaboral.IdTipoTrabajador Tipo');
+thorario.NTarjeta, tlaboral.Codigo, tlaboral.FInicio, tlaboral.IdTipoTrabajador Tipo, tunidad.NOMBREUNIDAD ascripcion, tbltipotrabajador.TIPOTRABAJADOR, tlaboral.Clave');
 		$this->db->from('tblpersonal');
 		$this->db->join('thorario', 'tblpersonal.IdPersonal = thorario.IdPersonal', 'left');
 		$this->db->join('tlaboral', 'tblpersonal.IdPersonal = tlaboral.IdPersonal', 'left');
+		$this->db->join('tunidad', 'tlaboral.IdAds = tunidad.ID', 'left');
+		$this->db->join('tbltipotrabajador', 'tlaboral.IdTipoTrabajador = tbltipotrabajador.IdTipoTrabajador', 'left');
 		$this->db->where('tblpersonal.IdPersonal', $IdPersonal);
 		$this->db->where('thorario.Estatus', 1);
 		$this->db->where('tlaboral.status', 1);

@@ -223,9 +223,12 @@
                 <div class="box-header with-border">
                   <h3 class="box-title">Sin Horario</h3>
                   <!-- /.box-tools -->
+                    <?php if ($this->session->userdata('IdPerfil')<=2) {?>
+
                   <div class="box-tools pull-right">
                     <a data-toggle="tooltip" data-original-title="Agregar Horario" class="btn btn-box-tool" href="<?php echo base_url();?>Plantilla/nuevohorario/<?php echo $datos_reg[0]->IdPersonal ?>"><i class="fa fa-clock-o"></i></a>
                   </div>
+                  <?php }?>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -283,9 +286,11 @@
                 <div class="box-header with-border">
                   <h3 class="box-title">Sin Datos Laborales</h3>
                   <!-- /.box-tools -->
+                  <?php if ($this->session->userdata('IdPerfil')<=2) {?>
                   <div class="box-tools pull-right">
                     <a data-toggle="tooltip" data-original-title="Nuevo Laboral" class="btn btn-box-tool" href="<?php echo base_url();?>Plantilla/nuevolaboral/<?php echo $datos_reg[0]->IdPersonal ?>"><i class="fa fa-file-o"></i></a>
                   </div>
+                  <?php }?>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">

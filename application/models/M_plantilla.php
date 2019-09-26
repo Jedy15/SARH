@@ -10,6 +10,12 @@ class M_plantilla extends CI_Model {
 		$this->load->library('session');
 	}
 
+	function Select_Nuevo_Registro(){
+		$this->db->select('IdPersonal');
+		$query = $this->db->get('tblpersonal');
+		return $query->result();		
+	}
+
 	function DeleteHorario($id)
 	{		
 		$this->db->where('IdHorario',$id);		
@@ -108,12 +114,12 @@ class M_plantilla extends CI_Model {
 
 	function Tarjeta($num){  //Buscar si la tarjeta existe y si esta activo
 		$where = "NTARJETA= ".$num. " AND Estatus = 1";
+		$this->db->select('IdPersonal');
 		$this->db->where($where);
 		$query = $this->db->get('thorario');
 		if ($query->num_rows() > 0) {
-			return true;
-		}
-		else{
+			return $query->result();
+		} else{
 			return false;
 		}
 	}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>SRH2018 | <?php echo $title; ?> Horario</title>
+  <title> SARH | <?php echo $title; ?> Horario</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -51,7 +51,7 @@
 <?php if($this->session->flashdata("Aviso")):?>
   <div class="alert alert-info alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <h4><i class="icon fa fa-ban"></i> Información sobre Actualizacion de Versión!</h4>
+    <h4><i class="icon fa fa-ban"></i> !</h4>
     <?php echo $this->session->flashdata("Aviso")?>
   </div>
 <?php endif; ?>

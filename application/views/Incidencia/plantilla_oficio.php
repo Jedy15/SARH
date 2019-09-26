@@ -2,7 +2,6 @@
 <html>
 <head>
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
-
   <style>
   table {
     border-collapse: collapse;
@@ -39,7 +38,7 @@
       <div class="col-xs-3"><img class="pull-right" src="<?php echo base_url();?>images/logo_salud_chiapas.jpg" alt=""></div>
     </div>
     <div class="row">
-      <div class="col-xs-6">
+      <div class="col-xs-4">
         <ul class="list-group list-group-unbordered">
           <li class="list-group-item">
             <b>Nombre:</b> <?php echo $personal[0]->SUFIJO.' '.$personal[0]->NOMBRES.' '.$personal[0]->APELLIDOS;?>
@@ -48,26 +47,39 @@
             <b>R.F.C.:</b> <?php echo $personal[0]->RFC;?>
           </li>
           <li class="list-group-item">
-            <b>Clave:</b> <?php echo $personal[0]->Codigo;?>
+            <b>Codigo:</b> <?php echo $personal[0]->Codigo;?>
           </li>
         </ul>
       </div>
-      <div class="col-xs-6">
+      <div class="col-xs-4">
         <ul class="list-group list-group-unbordered">
+          <li class="list-group-item">
+            <b>Numero de Tarjeta:</b> <?php echo $personal[0]->NTarjeta;?>
+          </li>
           <li class="list-group-item">
             <b>Fecha de Ingreso:</b> <?php echo $personal[0]->FInicio;?>
           </li>
           <li class="list-group-item">
             <b>Curp:</b> <?php echo $personal[0]->CURP;?>
           </li>
+          
+        </ul>
+      </div>
+      <div class="col-xs-4">
+        <ul class="list-group list-group-unbordered">
           <li class="list-group-item">
-            <b>Numero de Tarjeta:</b> <?php echo $personal[0]->NTarjeta;?>
+            <b>Clave Presupuestal:</b> <?php echo $personal[0]->Clave;?>
+          </li>
+          <li class="list-group-item">
+            <b>Adscripción:</b> <?php echo $personal[0]->ascripcion;?>
+          </li>
+          <li class="list-group-item">
+            <b>Tipo de Trabajador:</b> <?php echo $personal[0]->TIPOTRABAJADOR;?>
           </li>
         </ul>
       </div>
     </div>
 	</section>
-
 
 <div style="overflow-x:auto;">  
   <table>

@@ -177,7 +177,7 @@ class Incidencia extends CI_Controller {
 					'bold' => true
 				],
 				'alignment' => [
-					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+					'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
 					'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
 					'wrapText' => TRUE
 				]
@@ -237,20 +237,20 @@ class Incidencia extends CI_Controller {
 			$sheet->mergeCells("H2:Z2");
 
 			# FOLIO
-			$sheet->setCellValueByColumnAndRow(8,4 ,"TARJETA");
-			$sheet->getStyle("H4")->applyFromArray($tituloStyle);
-			$sheet->mergeCells("H4:K4");
-			$sheet->setCellValueByColumnAndRow(12,4 , $empleado[0]->NTarjeta);
-			$sheet->mergeCells("L4:T4");
-
-			# DATOS DEL USUARIO
-			$sheet->setCellValueByColumnAndRow(2,5 ,"NOMBRE:");
+			$sheet->setCellValueByColumnAndRow(2,5 ,"TARJETA:");
 			$sheet->getStyle("B5")->applyFromArray($tituloStyle);
-			$sheet->setCellValueByColumnAndRow(3,5 ,$empleado[0]->SUFIJO.' '.$empleado[0]->NOMBRES.' '.$empleado[0]->APELLIDOS);
-			$sheet->mergeCells("C5:L5");
+			$sheet->setCellValueByColumnAndRow(3,5 , $empleado[0]->NTarjeta);
+			$sheet->mergeCells("C5:F5");
 
 			# DATOS DEL USUARIO
-			$sheet->setCellValueByColumnAndRow(2,6 ,"CLAVE:");
+			$sheet->setCellValueByColumnAndRow(3,4 ,"NOMBRE:");
+			$sheet->getStyle("C4")->applyFromArray($tituloStyle);
+			$sheet->mergeCells("C4:F4");
+			$sheet->setCellValueByColumnAndRow(7,4 ,$empleado[0]->SUFIJO.' '.$empleado[0]->NOMBRES.' '.$empleado[0]->APELLIDOS);
+			$sheet->mergeCells("G4:Z4");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,6 ,"CODIGO:");
 			$sheet->getStyle("B6")->applyFromArray($tituloStyle);
 			$sheet->setCellValueByColumnAndRow(3,6 ,$empleado[0]->Codigo);
 			$sheet->mergeCells("C6:L6");
@@ -260,6 +260,12 @@ class Incidencia extends CI_Controller {
 			$sheet->getStyle("B7")->applyFromArray($tituloStyle);
 			$sheet->setCellValueByColumnAndRow(3,7 ,$empleado[0]->RFC);
 			$sheet->mergeCells("C7:L7");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,8 ,"CLAVE PRESUPUESTAL:");
+			$sheet->getStyle("B8")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(3,8 ,$empleado[0]->Clave);
+			$sheet->mergeCells("C8:L8");
 
 			# DATOS DEL USUARIO
 			$sheet->setCellValueByColumnAndRow(14,5 ,"CURP:");
@@ -275,10 +281,23 @@ class Incidencia extends CI_Controller {
 			$sheet->mergeCells("N6:R6");
 			$sheet->mergeCells("S6:W6");
 
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(14,7 ,"TIPO DE TRABAJADOR:");
+			$sheet->getStyle("N7")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(20,7 ,$empleado[0]->TIPOTRABAJADOR);
+			$sheet->mergeCells("N7:S7");
+			$sheet->mergeCells("T7:W7");
+
+			# DATOS DEL USUARIO
+			$sheet->setCellValueByColumnAndRow(2,9 ,"ADSCRIPCION:");
+			$sheet->getStyle("B9")->applyFromArray($tituloStyle);
+			$sheet->setCellValueByColumnAndRow(3,9 ,$empleado[0]->ascripcion);
+			$sheet->mergeCells("C9:Z9");
+
 			$siguenteFila = 0;
 			$indC = 2;
 
-			$posicionListaSiglas = 10;
+			$posicionListaSiglas = 12;
 			$indF = $posicionListaSiglas;
 
 			foreach($listaSiglas as $item)
@@ -388,7 +407,7 @@ class Incidencia extends CI_Controller {
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
 		$inicio = 10;
-		$fin = 10;
+		$fin = 9;
 		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
 		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
 		$tipo = $datos['usuario'][0]->Tipo;
@@ -416,7 +435,7 @@ class Incidencia extends CI_Controller {
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
 		$inicio = 10;
-		$fin = 10;
+		$fin = 9;
 		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
 		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
 		$tipo = $datos['personal'][0]->Tipo;
@@ -427,6 +446,7 @@ class Incidencia extends CI_Controller {
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
 		$datos['datos']=$data->resultado;
+		
 		// print_r($query);
 		// print_r($data->resultado);
 		$this->load->view('Incidencia/plantilla_oficio', $datos);
@@ -437,7 +457,7 @@ class Incidencia extends CI_Controller {
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
 		$inicio = 10;
-		$fin = 10;
+		$fin = 9;
 		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
 		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
 		$tipo = $datos['usuario'][0]->Tipo;

@@ -33,7 +33,11 @@
     margin: 0;
     padding: 0;
   }
-
+.columna{
+    float: left;
+    width: 66.66%;
+    margin:2px;
+}
   .column {
     float: left;
     width: 33.33%;
@@ -44,7 +48,7 @@
     content: "";
     display: table;
     clear: both;
-    margin: 8px;
+    margin: 4px;
   }
 
   .right {
@@ -83,15 +87,16 @@
   </center>
 
   <!-- # FOLIO -->
-  <div class="right">
+  <center>
     <span><b>N° Tarjeta:&nbsp;</b></span><span><?php echo $usuario[0]->NTarjeta; ?></span>
-  </div>
+  </center>
 
   <div class="clear"></div>
     <div class="row">
-   <div class="column">
+   <div class="columna">
      <span><b>NOMBRE:&nbsp;</b></span><span><?php echo   $usuario[0]->SUFIJO.' '.$usuario[0]->NOMBRES.' '.$usuario[0]->APELLIDOS; ?></span>
     </div>
+
     <div class="column">
      <span><b>R.F.C:&nbsp;</b></span><span><?php echo $usuario[0]->RFC; ?></span>
     </div>
@@ -99,7 +104,7 @@
 
   <div class="row">
    <div class="column">
-     <span><b>CLAVE:&nbsp;</b></span><span><?php echo $usuario[0]->Codigo; ?></span>
+     <span><b>CODIGO:&nbsp;</b></span><span><?php echo $usuario[0]->Codigo; ?></span>
     </div>
     <div class="column">
      <span><b>CURP:&nbsp;</b></span><span><?php echo $usuario[0]->CURP; ?></span>
@@ -109,52 +114,21 @@
      <span><b>FECHA DE INGRESO:&nbsp;</b></span><span><?php echo $usuario[0]->FInicio; ?></span>
     </div>
   </div>
+  <div class="row">
+   <div class="column">
+     <span><b>CLAVE PRESUPUESTAL:&nbsp;</b></span><span><?php echo $usuario[0]->Clave; ?></span>
+    </div>
+    <div class="column">
+     <span><b>TIPO DE TRABAJADOR:&nbsp;</b></span><span><?php echo $usuario[0]->TIPOTRABAJADOR; ?></span>
+    </div>
 
-  <div class="clear"></div><br/><br/><br/>
+    <div class="column">
+     <span><b>ADSCRIPCIÓN:&nbsp;</b></span><span><?php echo $usuario[0]->ascripcion; ?></span>
+    </div>
+  </div>
 
-<table class="tablaSiglas">
-  <?php
-   $siguenteFila = 0;
-
-   $openRow ="<tr>";
-   $closeRow ="</tr>";
-   $openCold ="<td>";
-   $closeCold ="</td>";
-
-   /*
-   if((count($listaSiglas) % 3) == 0)
-   {
-      $arregloVacio = array();
-      $arregloVacio[""] = "";
-      array_push($listaSiglas,)
-   }*/
-  foreach($listaSiglas as $item)
-  {
-      if($siguenteFila == 0 )
-        echo $openRow;
-
-      echo $openCold;
-      echo $item->Sigla;
-      echo $closeCold;
-
-      echo $openCold;
-      echo $item->TipoIncidencia;      
-      echo $closeCold;
-
-      if($siguenteFila == 2)
-      {
-        echo $closeRow;
-        $siguenteFila = 0;
-      }
-      else
-        $siguenteFila++;
-  }
-  ?>
-</table>
-  <div class="clear"></div>
-  <br/><br/><br/><br/><br/><br/>
-  <br/>
-<div>
+  <div class="clear"></div><br/><br/>
+<div> <!--Inicio de Tabla de Cardex-->
 <?php
       $nombreMeses =array();
       $nombreMeses[1] = "ENE";
@@ -219,6 +193,52 @@
       ?>
   </table>
 </div>
+
+  <div class="clear"></div>
+  <br/><br/>
+
+<center><h2>NOMENCLATURA</h2></center>
+<table class="tablaSiglas">
+  <?php
+   $siguenteFila = 0;
+
+   $openRow ="<tr>";
+   $closeRow ="</tr>";
+   $openCold ="<td>";
+   $closeCold ="</td>";
+
+   /*
+   if((count($listaSiglas) % 3) == 0)
+   {
+      $arregloVacio = array();
+      $arregloVacio[""] = "";
+      array_push($listaSiglas,)
+   }*/
+  foreach($listaSiglas as $item)
+  {
+      if($siguenteFila == 0 )
+        echo $openRow;
+
+        //Sigla
+      echo $openCold;
+      echo $item->Sigla;
+      echo $closeCold;
+
+      //Descripcion de Sigla
+      echo $openCold;
+      echo $item->TipoIncidencia;      
+      echo $closeCold;
+
+      if($siguenteFila == 2)
+      {
+        echo $closeRow;
+        $siguenteFila = 0;
+      }
+      else
+        $siguenteFila++;
+  }
+  ?>
+</table>
 
 </body>
 </html>

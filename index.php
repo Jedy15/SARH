@@ -1,4 +1,23 @@
 <?php
+$mantenimiento = false;
+if ($mantenimiento == true) { 
+	$ruta_mantenimiento = '//'.$_SERVER["SERVER_NAME"].'/images/mant.jpg';
+	?>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title></title>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		</head>
+		<body>
+			<section>
+				<img src="<?php echo $ruta_mantenimiento; ?>">
+			</section>
+		</bod>
+	</html>
+<?php } else {
 /**
  * CodeIgniter
  *
@@ -313,3 +332,4 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 require_once BASEPATH.'core/CodeIgniter.php';
+}

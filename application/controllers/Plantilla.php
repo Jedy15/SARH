@@ -15,16 +15,35 @@ class Plantilla extends CI_Controller {
 		}
 	}
 
-	public function EliminarHorario($IdPersonal)
+	public function BuscarNuevos(){
+		$data = $this->M_plantilla->Select_Nuevo_Registro();
+		echo json_encode($data);
+	}
+
+	public function EliminarHorario($IdPersonal=null)
 	{	
-		$id = $this->input->post('IdHorario');
-		$data = $this->M_plantilla->DeleteHorario($id);
-		if ($data==1) {
-			$this->session->set_flashdata('Aviso', 'Registro eliminado con Exito');			
-		} else {
-			$this->session->set_flashdata('error', 'Ocurrio un error al eliminar el registro <br> Intente nuevamente');
+		if ($IdPersonal==null) {
+			$this->session->set_flashdata('error', 'Falta Datos');
+			redirect('Plantilla');
 		}
-		redirect('Plantilla/Ver/'.$IdPersonal,'refresh');
+		if($this->input->post()){
+			if (!is_numeric($IdPersonal)) {
+				$this->session->set_flashdata('error', 'Datos invalidos');
+				redirect('Plantilla');
+			} else {
+				$id = $this->input->post('IdHorario');
+				$data = $this->M_plantilla->DeleteHorario($id);
+				if ($data==1) {
+					$this->session->set_flashdata('Aviso', 'Registro eliminado con Exito');			
+				} else {
+					$this->session->set_flashdata('error', 'Ocurrio un error al eliminar el registro <br> Intente nuevamente');
+				}
+				redirect('Plantilla/Ver/'.$IdPersonal,'refresh');
+			}
+		} else {
+			$this->session->set_flashdata('error', 'Datos invalidos');
+			redirect('Plantilla');
+		}		
 	}
 
 	function CargarInstitutos(){
@@ -145,52 +164,58 @@ class Plantilla extends CI_Controller {
 		$this->load->view('Plantilla/view_list_plantilla');
 	}
 
-	function upload($Id){
-		// $nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/SARH/docs/'.$Id;
-		$nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/docs/'.$Id;
-
-		if (!file_exists($nombre_fichero)) {
-			// echo "El fichero $nombre_fichero No existe";
-			mkdir($nombre_fichero, 0755, true);
+	function upload($Id=null){
+		if ($Id==null) {
+			$this->session->set_flashdata("error","Error en datos");
+			redirect('Plantilla');	
 		}
-		// echo "continua";
-		$config['upload_path']          = $nombre_fichero;
-		$config['allowed_types']        = 'gif|jpg|jpeg|png';
-		$config['max_size']             = 10240;
-		$config['file_name']			= 'foto.JPG';
-		$config['overwrite']			= TRUE;
 
-		$this->load->library('upload', $config);
-		if ( ! $this->upload->do_upload('foto')){
-			$this->session->set_flashdata("Error","Error al cargar Foto, informe al area de Informatica");
-			redirect('Plantilla/ver/'.$Id,'refresh');
+		if (is_numeric($Id)) {
+			$nombre_fichero =   $_SERVER['DOCUMENT_ROOT'].'/docs/'.$Id;
+			if (!file_exists($nombre_fichero)) {
+				mkdir($nombre_fichero, 0755, true);
+			}
+			$config['upload_path']          = $nombre_fichero;
+			$config['allowed_types']        = 'gif|jpg|jpeg|png';
+			$config['max_size']             = 10240;
+			$config['file_name']			= 'foto.JPG';
+			$config['overwrite']			= TRUE;
+
+			$this->load->library('upload', $config);
+			if ( ! $this->upload->do_upload('foto')){
+				$this->session->set_flashdata("Error","Error al cargar Foto, informe al area de Informatica");
+				redirect('Plantilla/ver/'.$Id,'refresh');
+			} else {
+				$exito = $this->crearMiniatura($Id);
+				if ($exito) {
+					$this->session->set_flashdata('Aviso', 'Foto de Expediente Actualizado');
+				} else {
+					$this->session->set_flashdata('error', 'Error al actualizar expediente');
+				}
+				redirect('Plantilla/ver/'.$Id,'refresh');
+			}
 		} else {
-			$this->crearMiniatura($Id);
-			redirect('Plantilla/ver/'.$Id,'refresh');
-		}
+			$this->session->set_flashdata("error",'Datos No validos');			
+			redirect('Plantilla');
+		}	
 	}
 
 	function crearMiniatura($Id){
-        // $config['image_library'] = 'ImageMagick';
 		$config['image_library'] = 'gd2';
-		// $config['source_image'] =  $_SERVER["DOCUMENT_ROOT"]."/SARH/docs/".$Id."/foto.JPG";
 		$config['source_image'] =  $_SERVER["DOCUMENT_ROOT"]."/docs/".$Id."/foto.JPG";
-
 		$config['create_thumb'] = TRUE;
-		// $config['master_dim'] = width;
-        // $config['new_image']='//192.168.1.60/HM2018/images/Expediente/fotoscredencial/'.$Id.'.JPG';
-        $config['thumb_marker']= $Id;//captura_thumb.png
+		$config['thumb_marker']= $Id;//captura_thumb.png
         $config['width'] = 128;
         $config['height'] = 128;
-        // $config['rotation_angle'] = 'vrt';
-        // $config['file_name'] = $Id.'.JPG';
-        $this->load->library('image_lib', $config); 
+		
+		$this->load->library('image_lib', $config); 
         if ( ! $this->image_lib->resize())
         {
         	$error = $this->image_lib->display_errors();
         	$this->session->set_flashdata("Error",$error);
-        }
-        // print_r($config);
+        } else {
+			return true;
+		}
     }
 
     function Exp(){
@@ -205,8 +230,6 @@ class Plantilla extends CI_Controller {
     	$ID = $this->input->post('IdExp');
     	$cantidad = $this->M_plantilla->ContarExp($ID);
     	$data = $this->M_plantilla->Id_Grupo($ID);
-		// echo $cantidad;
-		// print_r($data);
     	echo $data[0]->Sigla;
     	echo "/";
     	echo $cantidad+1001;
@@ -220,10 +243,20 @@ class Plantilla extends CI_Controller {
     	redirect('Plantilla/ver/'.$id);
     }
 
-    function eliminarEstudio($id, $id2){
-    	$this->M_plantilla->DeleteEstudio($id);
-    	$this->session->set_flashdata("Aviso","Estudios Eliminados");
-    	redirect('Plantilla/ver/'.$id2);
+    function eliminarEstudio($id=null, $id2=null){
+		if ($id==null or $id2==null) {
+			$this->session->set_flashdata("error","Error en datos");
+			redirect('Plantilla');
+		}
+
+		if(is_numeric($id) and is_numeric($id2)){
+			$this->M_plantilla->DeleteEstudio($id);
+			$this->session->set_flashdata("Aviso","Estudios Eliminados");
+			redirect('Plantilla/ver/'.$id2);
+		} else {
+			$this->session->set_flashdata("error","Error en datos");
+			redirect('Plantilla');
+		}
     }
 
     function CargarOperativo(){
@@ -428,30 +461,30 @@ class Plantilla extends CI_Controller {
 			$data['Servicio']=$this->M_administrar->servicios();
 			if($this->input->post()){
 				$datos = $this->input->post();		 
-				$this->M_plantilla->bajahorario($id);
 				$NT = $this->M_plantilla->Tarjeta($datos['NTarjeta']);
-				if ($NT == true) {
-					$this->session->set_flashdata("tarjeta","El numero de tarjeta: ".$datos['NTarjeta']." se encuentra en uso, favor de verificar");
-					
-					
-					$data['title'] = 'Nuevo';
-					$this->load->view('Plantilla/v_frm_horario', $data);
-					// redirect('Plantilla/prueba/'.$id);
-				} elseif ($datos['HE'] == $datos['HS']){
+				if ($NT) {
+					if ($NT[0]->IdPersonal == $id) {
+						$this->M_plantilla->bajahorario($id);
+					} else {
+						$this->session->set_flashdata("tarjeta","El numero de tarjeta: ".$datos['NTarjeta']." se encuentra en uso, favor de verificar");
+						redirect('Plantilla/nuevohorario/'.$id,'refresh');
+					}
+				}
+				if ($datos['HE'] == $datos['HS']){
 					$datos['HE'] = '00:00:00';
 					$datos['HS'] = '00:00:00';
 				} else {
-						$HRE=strtotime($datos['HE']); //codigo para convertir de hora de 12 a 24 hrs					
-						$HRS=strtotime($datos['HS']); //codigo para convertir de hora de 12 a 24 hrs
-						$datos['HE'] = date("H:i:s", $HRE);
-						$datos['HS'] = date("H:i:s", $HRS); 					
-					}
-					$datos['IdPersonal']= $id;
-					$datos['IdUsuario']= $this->session->userdata('id');
-					$this->M_plantilla->insertlhorario($datos);
-					$this->M_inicio->monitor(2, 4, $datos['IdUsuario']);
-					$this->session->set_flashdata("Aviso","Nuevo Horario Agregado");
-					redirect('Plantilla/ver/'.$id);
+					$HRE=strtotime($datos['HE']); //codigo para convertir de hora de 12 a 24 hrs					
+					$HRS=strtotime($datos['HS']); //codigo para convertir de hora de 12 a 24 hrs
+					$datos['HE'] = date("H:i:s", $HRE);
+					$datos['HS'] = date("H:i:s", $HRS); 					
+				}
+				$datos['IdPersonal']= $id;
+				$datos['IdUsuario']= $this->session->userdata('id');
+				$this->M_plantilla->insertlhorario($datos);
+				$this->M_inicio->monitor(2, 4, $datos['IdUsuario']);
+				$this->session->set_flashdata("Aviso","Nuevo Horario Agregado");
+				redirect('Plantilla/ver/'.$id);
 			} else {//hay datos en post
 				$data['title'] = 'Nuevo';
 				$ultimo = $this->M_plantilla->ultimo_horario($id);
@@ -471,10 +504,7 @@ class Plantilla extends CI_Controller {
 	}
 
 	function Municipios(){
-		// $datos['data'] = $this->M_plantilla->operativo();
 		$datos = $this->M_inicio->muni();
-		// print_r($datos);
-		// return $datos;
 		echo json_encode($datos);
 	}
 

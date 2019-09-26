@@ -116,7 +116,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
-							<span class="info-box-icon bg-green"><i class="fa fa-calendar-check-o"></i></span>
+							<span class="info-box-icon bg-green"><i class="fa fa-plus-square"></i></span>
 							<div class="info-box-content">
 								<span class="info-box-text">Dias Económicos <?php echo date("Y"); ?></span>
 								<span class="info-box-number"><span id="TotalEconomico"></span><small> en el año</small></span>
@@ -130,7 +130,7 @@
 
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
-							<span class="info-box-icon bg-yellow"><i class="fa  fa-folder-open-o"></i></span>
+							<span class="info-box-icon bg-yellow"><i class="fa fa-bed"></i></span>
 							<div class="info-box-content">
 								<span class="info-box-text">Reposición de Dias <?php echo date("Y"); ?></span>
 								<span class="info-box-number"><span id="TotalRepocision"></span><small> en el año</small></span>
