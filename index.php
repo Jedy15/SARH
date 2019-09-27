@@ -1,5 +1,5 @@
 <?php
-$mantenimiento = false;
+$mantenimiento = FALSE;
 if ($mantenimiento == true) { 
 	$ruta_mantenimiento = '//'.$_SERVER["SERVER_NAME"].'/images/mant.jpg';
 	?>

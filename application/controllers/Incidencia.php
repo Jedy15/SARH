@@ -211,7 +211,7 @@ class Incidencia extends CI_Controller {
 			$drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
 			$drawing->setName('Logo');
 			$drawing->setDescription('A1');
-			$urlImg = $_SERVER['DOCUMENT_ROOT']."/sarh/images/SSA.jpg";
+			$urlImg = $_SERVER['DOCUMENT_ROOT']."/images/SSA.jpg";
 			$drawing->setPath($urlImg);
 			$drawing->setCoordinates('A1');
 			$drawing->setHeight(70);
@@ -220,7 +220,7 @@ class Incidencia extends CI_Controller {
 			$drawing2 = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
 			$drawing2->setName('Logo2');
 			$drawing2->setDescription('L1');
-			$urlImg = $_SERVER['DOCUMENT_ROOT']."/sarh/images/logo_salud_chiapas.png";
+			$urlImg = $_SERVER['DOCUMENT_ROOT']."/images/logo_salud_chiapas.png";
 			$drawing2->setPath($urlImg);
 			$drawing2->setCoordinates('AB1');
 			$drawing2->setHeight(70);
