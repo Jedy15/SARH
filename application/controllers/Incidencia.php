@@ -21,7 +21,7 @@ class Incidencia extends CI_Controller {
 		}
 	}
 
-	public function datosParaReporteDeIncidencias($periodoInicio = 1,$periodoFinal = 12, $incidencias=array())
+	public function datosParaReporteDeIncidencias($periodoInicio = 1,$periodoFinal = 12, $incidencias=array(), $anio)
   	{
 		$respuesta = new stdclass();
 		# incluye el arreglo de datos.
@@ -75,6 +75,38 @@ class Incidencia extends CI_Controller {
 			#######################################################################################
 			# 3.- CREANDO RESULTADO FINAL.
 			$tabla = array();
+
+           # Sin contrato
+          if($periodoInicio == 10 && $periodoFinal == 9)
+           {
+             $anioAnterior = (int) $anio-1;
+
+             # Sí no existen registros del año anterior, crearlo con datos vacios.
+             if(!array_key_exists($anioAnterior,$resultado))
+               $resultado[$anioAnterior] = array();
+          }
+
+          # Con contrato.
+          if($periodoInicio == 1 && $periodoFinal == 12)
+          {
+              $anioAnterior = (int) $anio-1;
+              $anioSiguiente = (int) $anio+1;
+
+            # Sí existen registros del año anterior eliminarlos
+            if(array_key_exists($anioAnterior,$resultado))
+                unset($resultado[$anioAnterior]);
+
+            # Sí existen registros del año siguiente eliminarlos
+            if(array_key_exists($anioSiguiente,$resultado))
+              unset($resultado[$anioSiguiente]);
+          }
+
+         # Ordenar años ascendentemente...
+          asort($resultado);
+
+
+
+
 
 			# contador años
 			$year = 1;
@@ -416,7 +448,7 @@ class Incidencia extends CI_Controller {
 			$fin = 12;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
-		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
 		$datos['datos']=$data->resultado;
 		$this->load->view('Incidencia/v_plantilla_pdf', $datos);
 
@@ -444,11 +476,8 @@ class Incidencia extends CI_Controller {
 			$fin = 12;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
-		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
 		$datos['datos']=$data->resultado;
-		
-		// print_r($query);
-		// print_r($data->resultado);
 		$this->load->view('Incidencia/plantilla_oficio', $datos);
 	}
 
@@ -466,7 +495,7 @@ class Incidencia extends CI_Controller {
 			$fin = 12;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
-		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query);
+		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
 		$datos['datos']=$data->resultado;
 		$this->GenerarCardexExcel($datos['datos'], $datos['usuario'], $datos['listaSiglas']);
 		

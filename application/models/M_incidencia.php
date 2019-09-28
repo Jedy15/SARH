@@ -187,9 +187,9 @@ class M_incidencia extends CI_Model {
 
 	public function DatosCardex($year,$tipo,$IdPersonal)	{
 		if ($tipo==2){
-			$where = "year(start) = ".$year;
+			$where = "t_regincidencia.IdPersonal = ".$IdPersonal." and year(t_regincidencia.start) = ".$year." or t_regincidencia.IdPersonal = ".$IdPersonal." and year(t_regincidencia.end) = ".$year;
 		} else {
-			$where = "`start` between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-30')";
+			$where = "t_regincidencia.IdPersonal = ".$IdPersonal." and t_regincidencia.start between concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-30') or t_regincidencia.IdPersonal = ".$IdPersonal." and t_regincidencia.end between  concat(".$year."-1, '-10-01') AND concat(".$year.", '-09-30')";
 		}
 		$this->db->select('Date(t_regincidencia.start) start, if(TIMESTAMPDIFF(DAY, start, end) > 0, date_sub(date(end), INTERVAL 1 DAY), date(end)) end, t_tipo_incidencia.Sigla');
 		$this->db->from('t_regincidencia');
@@ -197,7 +197,6 @@ class M_incidencia extends CI_Model {
 		$this->db->join('t_incidencia', 't_regincidencia.Id_Inc = t_incidencia.Id', 'left');
 		$this->db->join('tblusuario', 't_regincidencia.IdUsuario = tblusuario.IdUsuario', 'left');
 		$this->db->join('t_tipo_incidencia', 't_incidencia.IdSigla = t_tipo_incidencia.Id', 'left');
-		$this->db->where('IdPersonal', $IdPersonal);
 		$this->db->where($where);
 		$this->db->order_by('start', 'asc');
 		$query = $this->db->get();
