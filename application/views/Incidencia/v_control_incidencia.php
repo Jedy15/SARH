@@ -399,6 +399,7 @@
 
 	<!-- Select2 -->
 	<script src="<?php echo base_url(); ?>assets/bower_components/select2/dist/js/select2.full.min.js"></script>
+	<script src="<?php echo base_url(); ?>assets/bower_components/select2/dist/js/i18n/es.js"></script>
 
 	<!-- InputMask -->
 	<script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.inputmask.js"></script>
@@ -427,6 +428,8 @@
 		$(function () {
     		//Initialize Select2 Elements
     		$('#YearCardex').select2({
+				language: "es",
+				dropdownParent: $('#modal-cardex'),
 				placeholder: "Seleccione Año",
     			ajax: {
     				url: '<?php echo base_url();?>Incidencia/YearCardex/<?php echo $Persona[0]->IdPersonal ?>',

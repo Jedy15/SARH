@@ -203,10 +203,21 @@ class M_incidencia extends CI_Model {
 		return $query->result();
 	}
 
+	function TipoTrabajador($IdPersonal){
+		$this->db->select('tlaboral.IdTipoTrabajador Tipo');
+		$this->db->from('tblpersonal');
+		$this->db->join('tlaboral', 'tblpersonal.IdPersonal = tlaboral.IdPersonal', 'left');
+		$this->db->where('tlaboral.status', 1);
+		$this->db->where('tblpersonal.IdPersonal', $IdPersonal);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
 	public function DatosPersonalesCardex($IdPersonal)
 	{		
 		$this->db->select('tblpersonal.SUFIJO, tblpersonal.NOMBRES, tblpersonal.APELLIDOS, tblpersonal.RFC, tblpersonal.CURP, 
-thorario.NTarjeta, tlaboral.Codigo, tlaboral.FInicio, tlaboral.IdTipoTrabajador Tipo, tunidad.NOMBREUNIDAD ascripcion, tbltipotrabajador.TIPOTRABAJADOR, tlaboral.Clave');
+		thorario.NTarjeta, tlaboral.Codigo, tlaboral.FInicio, tlaboral.IdTipoTrabajador Tipo, tunidad.NOMBREUNIDAD ascripcion, 
+		tbltipotrabajador.TIPOTRABAJADOR, tlaboral.Clave');
 		$this->db->from('tblpersonal');
 		$this->db->join('thorario', 'tblpersonal.IdPersonal = thorario.IdPersonal', 'left');
 		$this->db->join('tlaboral', 'tblpersonal.IdPersonal = tlaboral.IdPersonal', 'left');

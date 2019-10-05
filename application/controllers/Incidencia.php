@@ -102,11 +102,7 @@ class Incidencia extends CI_Controller {
           }
 
          # Ordenar años ascendentemente...
-          asort($resultado);
-
-
-
-
+          ksort($resultado);
 
 			# contador años
 			$year = 1;
@@ -438,14 +434,16 @@ class Incidencia extends CI_Controller {
 		$post = $this->input->post();
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
-		$inicio = 10;
-		$fin = 9;
 		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
 		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
-		$tipo = $datos['usuario'][0]->Tipo;
+		$tipo=$this->M_incidencia->TipoTrabajador($IdPersonal);
+		$tipo = $tipo[0]->Tipo;
 		if ($tipo==2) {	
 			$inicio = 1;
 			$fin = 12;
+		} else {
+			$inicio = 10;
+			$fin = 9;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
@@ -466,14 +464,16 @@ class Incidencia extends CI_Controller {
 		$post = $this->input->post();
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
-		$inicio = 10;
-		$fin = 9;
 		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
-		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
-		$tipo = $datos['personal'][0]->Tipo;
+		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();
+		$tipo=$this->M_incidencia->TipoTrabajador($IdPersonal);
+		$tipo = $tipo[0]->Tipo;
 		if ($tipo==2) {	
 			$inicio = 1;
 			$fin = 12;
+		} else {
+			$inicio = 10;
+			$fin = 9;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
@@ -485,14 +485,16 @@ class Incidencia extends CI_Controller {
 		$post = $this->input->post();
 		$IdPersonal = $post['IdPersonal'];
 		$year = $post['YearCardex'];
-		$inicio = 10;
-		$fin = 9;
 		$datos['usuario']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
 		$datos['listaSiglas']=$this->M_incidencia->TipoIncidencia();	
-		$tipo = $datos['usuario'][0]->Tipo;
+		$tipo=$this->M_incidencia->TipoTrabajador($IdPersonal);
+		$tipo = $tipo[0]->Tipo;
 		if ($tipo==2) {	
 			$inicio = 1;
 			$fin = 12;
+		} else {
+			$inicio = 10;
+			$fin = 9;
 		}
 		$query = $this->M_incidencia->DatosCardex($year, $tipo, $IdPersonal);
 		$data=$this->datosParaReporteDeIncidencias($inicio,$fin,$query,$year);
@@ -551,34 +553,36 @@ class Incidencia extends CI_Controller {
 	}
 
 	function YearCardex($IdPersonal){
-		$datos['personal']=$this->M_incidencia->DatosPersonalesCardex($IdPersonal);
+		$datos['personal']=$this->M_incidencia->TipoTrabajador($IdPersonal);
 		$tipo = $datos['personal'][0]->Tipo;
 		if ($tipo==2) {
 			$data['results'] = $this->M_incidencia->YearCardex2($IdPersonal);
 		} else {
 			$buscar = $this->M_incidencia->YearCardex1($IdPersonal);
-			$inicio = date('n', strtotime($buscar[0]->primero));
-			$fin = date('n', strtotime($buscar[0]->ultimo));
-			$yearfin = null;
-			$yearinicio = null;
-			if ($inicio>9) {
-				$yearinicio = date('Y',strtotime($buscar[0]->primero))+1;
+			if ($buscar[0]->primero && $buscar[0]->ultimo) {
+				$inicio = date('n', strtotime($buscar[0]->primero));
+				$fin = date('n', strtotime($buscar[0]->ultimo));
+				$yearfin = null;
+				$yearinicio = null;
+				if ($inicio>9) {
+					$yearinicio = date('Y',strtotime($buscar[0]->primero))+1;
+				} else {
+					$yearinicio = date('Y',strtotime($buscar[0]->primero));
+				}
+				if ($fin>9) {
+					$yearfin = date('Y',strtotime($buscar[0]->ultimo)) + 1;
+				} else {
+					$yearfin = date('Y',strtotime($buscar[0]->ultimo));
+				}
+				$i = 0;
+				while ($yearinicio <= $yearfin) {
+					$data['results'][$i]['id'] = $yearinicio;
+					$data['results'][$i]['text'] = $yearinicio;
+					$yearinicio++;
+					$i++;
+				}
 			} else {
-				$yearinicio = date('Y',strtotime($buscar[0]->primero));
-			}
-			if ($fin>9) {
-				$yearfin = date('Y',strtotime($buscar[0]->ultimo)) + 1;
-			} else {
-				$yearfin = date('Y',strtotime($buscar[0]->ultimo));
-			}
-			// echo 'Año Fin: '.$yearfin;
-			// echo $yearinicio;
-			$i = 0;
-			while ($yearinicio <= $yearfin) {
-				$data['results'][$i]['id'] = $yearinicio;
-				$data['results'][$i]['text'] = $yearinicio;
-				$yearinicio++;
-				$i++;
+				$data['results']=array();
 			}
 		}		
 		echo json_encode($data);
