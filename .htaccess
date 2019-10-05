@@ -11,5 +11,7 @@ RewriteRule ^(.*)$ index.php?/$1 [L]
 # Prevent user access to the CI application folder.
 RewriteCond %{REQUEST_URI} ^application.* 
 RewriteRule ^(.*)$ index.php?/$1 [L]
+
+Options -Indexes
 </Ifmodule>
 
